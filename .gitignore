@@ -1,0 +1,9 @@
+.*.swp
+.*.swo
+*~
+*id_rsa
+/backup
+/lib
+*.exe
+*.res
+
