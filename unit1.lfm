@@ -1,0 +1,128 @@
+object Form1: TForm1
+  Left = 705
+  Height = 721
+  Top = 347
+  Width = 812
+  ActiveControl = OKButton
+  Caption = 'Form1'
+  ClientHeight = 721
+  ClientWidth = 812
+  Constraints.MinHeight = 300
+  Constraints.MinWidth = 400
+  OnCreate = FormCreate
+  Visible = False
+  object OKButton: TButton
+    Left = 711
+    Height = 24
+    Top = 48
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Go!'
+    OnClick = OKButtonClick
+    TabOrder = 0
+  end
+  object CancelButton: TButton
+    Left = 711
+    Height = 24
+    Top = 679
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Clear'
+    OnClick = CancelButtonClick
+    TabOrder = 1
+  end
+  object Edit1: TEdit
+    AnchorSideLeft.Side = asrBottom
+    Left = 96
+    Height = 21
+    Top = 24
+    Width = 690
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 2
+    Text = 'http://play.grafana.org/api/dashboards/db/grafana-play-home'
+  end
+  object Memo1: TMemo
+    AnchorSideTop.Control = PaintBox1
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Side = asrBottom
+    Left = 8
+    Height = 265
+    Top = 405
+    Width = 778
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Top = 5
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 3
+  end
+  object PaintBox1: TPaintBox
+    AnchorSideRight.Side = asrBottom
+    Left = 8
+    Height = 280
+    Top = 120
+    Width = 778
+    Anchors = [akTop, akLeft, akRight]
+    Color = clGray
+    ParentColor = False
+    OnClick = PaintBox1Click
+    OnPaint = PaintBox1Paint
+  end
+  object Edit2: TEdit
+    Left = 96
+    Height = 21
+    Top = 48
+    Width = 80
+    TabOrder = 4
+    Text = '1'
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 13
+    Top = 24
+    Width = 78
+    Caption = 'Dahsboard URL:'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 61
+    Height = 13
+    Top = 48
+    Width = 25
+    Caption = 'Row:'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 208
+    Height = 13
+    Top = 48
+    Width = 30
+    Caption = 'Panel:'
+    ParentColor = False
+  end
+  object Edit3: TEdit
+    Left = 248
+    Height = 21
+    Top = 48
+    Width = 80
+    TabOrder = 5
+    Text = '0'
+  end
+  object Label4: TLabel
+    Left = 360
+    Height = 13
+    Top = 48
+    Width = 32
+    Caption = 'Target'
+    ParentColor = False
+  end
+  object Edit4: TEdit
+    Left = 400
+    Height = 21
+    Top = 48
+    Width = 80
+    TabOrder = 6
+    Text = '0'
+  end
+end
