@@ -76,47 +76,47 @@ end;
 
 procedure TForm1.OKButtonClick(Sender: TObject);
 begin
+    with TFPHttpClient.Create(nil) do
+        try
+            AllowRedirect := True;
+            S := Get(Edit1.Text);
+        finally
+            Free;
+        end;
+    //Label1.Caption:= S;
+    //Memo1.Lines.Clear;
+    //jData:= GetJSON(S);
+    //Memo1.Lines.Add(jData.FormatJSON);
 
-    //// Forge a request to play.grafana.org
-    //with TFPHttpClient.Create(nil) do
-    //    try
-    //        AllowRedirect := True;
-    //        S := Get(Edit1.Text);
-    //    finally
-    //        Free;
-    //    end;
-    //
-    //needle := 'dashboard.rows[' + Edit2.Text + '].panels[' + Edit3.Text +
-    //    '].targets[' + Edit4.Text + '].target';
-    //try
-    //    jData := GetJSON(S);
-    //    s2 := jData.GetPath(needle).asJSON;
-    //except
-    //    on e: EJSON do
-    //        Memo1.Lines.Add(e.toString);
-    //end;
-    //s2 := s2.Trim('"');
-    //Memo1.Lines.Add(s2);
-    //
-    ////jd3:= GetJSON('{ "target" : [ ' + s2 + ' ], "from" : "-2h", until : "now", format : "json" }');
-    //R := TStringList.Create;
-    //R.Delimiter := '&';
-    ////s3:= 'alias(statsd.fakesite.counters.session_start.desktop.count, ''memory'')';
-    //R.values['target'] := URLEncode(s2);
-    //R.values['from'] := '-2h';
-    //R.values['until'] := 'now';
-    //R.values['format'] := 'json';
-    //R.values['maxDataPoints'] := '1800';
-    ////s3:= 'target=alias(statsd.fakesite.counters.session_start.desktop.count%2C%20''memory'')&from=-2h&until=now&format=json';
+    //jObject := TJSONObject(jData);
+    //jo2:= jObject.Get('dashboard', TJSONObject(GetJSON('{}')));
+    //ja2:= jo2.Get('rows', TJSONArray(GetJSON('{}')));
+    //jo3:= ja2.Objects[1];
+    //ja3:= jo3.Get('panels', TJSONArray(GetJSON('{}')));
+    //Memo1.Lines.Add(ja3.Extract(0).FormatJSON);
 
-    //Forge a request to grafana.dfd-hamburg.de
-    s2:= Edit1.Text; //base url ie: http://grafana.dfd-hamburg.de/api/datasources/proxy/9/query
+    needle := 'dashboard.rows[' + Edit2.Text + '].panels[' + Edit3.Text +
+        '].targets[' + Edit4.Text + '].target';
+    try
+        jData := GetJSON(S);
+        s2 := jData.GetPath(needle).asJSON;
+    except
+        on e: EJSON do
+            Memo1.Lines.Add(e.toString);
+    end;
+    s2 := s2.Trim('"');
+    Memo1.Lines.Add(s2);
+
+    //jd3:= GetJSON('{ "target" : [ ' + s2 + ' ], "from" : "-2h", until : "now", format : "json" }');
     R := TStringList.Create;
     R.Delimiter := '&';
-    R.values['db'] := 'telegraf';
-    R.values['q'] := URLEncode('SELECT non_negative_derivative(mean(err_in), 1s) as "in" FROM "net" WHERE host =~ /abinaapp01.dfd-hamburg.de/ AND time > now() - 30m GROUP BY time(5s), host,interface fill(none)');
-    R.values['epoch'] := 's';
-
+    //s3:= 'alias(statsd.fakesite.counters.session_start.desktop.count, ''memory'')';
+    R.values['target'] := URLEncode(s2);
+    R.values['from'] := '-2h';
+    R.values['until'] := 'now';
+    R.values['format'] := 'json';
+    R.values['maxDataPoints'] := '1800';
+    //s3:= 'target=alias(statsd.fakesite.counters.session_start.desktop.count%2C%20''memory'')&from=-2h&until=now&format=json';
     Memo1.Lines.Add(R.DelimitedText);
 
     with TFPHttpClient.Create(nil) do
@@ -124,12 +124,12 @@ begin
             AllowRedirect := True;
             AddHeader('Content-Type', 'application/json');
             AddHeader('Accept', 'application/json');
-            S := FormPost(s2 + '?', R.DelimitedText);
+            S := FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
         finally
             Free;
         end;
     jData := GetJSON(S);
-    jd2 := jData.GetPath('[0].series[0].values');
+    jd2 := jData.GetPath('[0].datapoints');
     jArray := TJSONArray(jd2);
     //jArray.(TJSONArray(jd2));
 
