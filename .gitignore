@@ -4,6 +4,7 @@
 *.exe
 *.res
 *.bak
+*.dbg
 *id_rsa
 /backup
 /lib

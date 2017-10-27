@@ -167,6 +167,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
     Memo1.ScrollBars := ssVertical;
+    DoubleBuffered:= True;
 end;
 
 procedure TForm1.CancelButtonClick(Sender: TObject);
