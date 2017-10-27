@@ -9,7 +9,9 @@ object Form1: TForm1
   ClientWidth = 812
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
+  DesignTimePPI = 106
   OnCreate = FormCreate
+  LCLVersion = '1.8.0.4'
   Visible = False
   object OKButton: TButton
     Left = 711
@@ -34,7 +36,7 @@ object Form1: TForm1
   object Edit1: TEdit
     AnchorSideLeft.Side = asrBottom
     Left = 96
-    Height = 21
+    Height = 25
     Top = 24
     Width = 690
     Anchors = [akTop, akLeft, akRight]
@@ -71,7 +73,7 @@ object Form1: TForm1
   end
   object Edit2: TEdit
     Left = 96
-    Height = 21
+    Height = 25
     Top = 48
     Width = 80
     TabOrder = 4
@@ -79,31 +81,31 @@ object Form1: TForm1
   end
   object Label1: TLabel
     Left = 8
-    Height = 13
+    Height = 17
     Top = 24
-    Width = 78
+    Width = 95
     Caption = 'Dahsboard URL:'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 61
-    Height = 13
+    Height = 17
     Top = 48
-    Width = 25
+    Width = 28
     Caption = 'Row:'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 208
-    Height = 13
+    Height = 17
     Top = 48
-    Width = 30
+    Width = 34
     Caption = 'Panel:'
     ParentColor = False
   end
   object Edit3: TEdit
     Left = 248
-    Height = 21
+    Height = 25
     Top = 48
     Width = 80
     TabOrder = 5
@@ -111,15 +113,15 @@ object Form1: TForm1
   end
   object Label4: TLabel
     Left = 360
-    Height = 13
+    Height = 17
     Top = 48
-    Width = 32
+    Width = 38
     Caption = 'Target'
     ParentColor = False
   end
   object Edit4: TEdit
     Left = 400
-    Height = 21
+    Height = 25
     Top = 48
     Width = 80
     TabOrder = 6

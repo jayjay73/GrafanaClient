@@ -3,8 +3,8 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="10"/>
-    <BuildModes Active="Default"/>
-    <Units Count="10">
+    <BuildModes Active="Debug"/>
+    <Units Count="9">
       <Unit0>
         <Filename Value="GrafanaClient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -20,7 +20,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
         <IsVisibleTab Value="True"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="107"/>
+        <CursorPos X="47" Y="132"/>
+        <UsageCount Value="215"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -33,57 +35,49 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
         <CursorPos X="33" Y="115"/>
-        <UsageCount Value="202"/>
+        <UsageCount Value="183"/>
       </Unit2>
       <Unit3>
         <Filename Value="C:\Development\FreePascal\fpc\rtl\objpas\classes\stringl.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="533"/>
         <CursorPos X="20" Y="551"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="81"/>
       </Unit3>
       <Unit4>
         <Filename Value="C:\Development\FreePascal\fpc\packages\fcl-web\src\base\fphttpclient.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1551"/>
         <CursorPos X="18" Y="1577"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="81"/>
       </Unit4>
       <Unit5>
         <Filename Value="C:\Development\FreePascal\fpc\rtl\inc\objpash.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="178"/>
         <CursorPos X="25" Y="206"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="81"/>
       </Unit5>
       <Unit6>
         <Filename Value="C:\Development\FreePascal\fpc\rtl\inc\objpas.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="256"/>
         <CursorPos X="12" Y="286"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="81"/>
       </Unit6>
       <Unit7>
         <Filename Value="C:\Development\FreePascal\fpc\packages\fcl-json\src\fpjson.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2564"/>
         <CursorPos X="33" Y="2598"/>
-        <UsageCount Value="58"/>
+        <UsageCount Value="39"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\Development\FreePascal\fpc\rtl\objpas\sysutils\sysutilh.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="4" Y="107"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="1"/>
       </Unit8>
-      <Unit9>
-        <Filename Value="C:\Development\FreePascal\fpc\packages\fcl-web\src\base\httpdefs.pp"/>
-        <UnitName Value="HTTPDefs"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="151"/>
-        <CursorPos X="3" Y="406"/>
-        <UsageCount Value="16"/>
-      </Unit9>
     </Units>
     <JumpHistory HistoryIndex="-1"/>
   </ProjectSession>
