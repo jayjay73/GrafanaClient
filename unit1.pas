@@ -105,31 +105,45 @@ begin
             Memo1.Lines.Add(e.toString);
     end;
     s2 := s2.Trim('"');
-    Memo1.Lines.Add(s2);
+    //Memo1.Lines.Add(s2);
 
     //jd3:= GetJSON('{ "target" : [ ' + s2 + ' ], "from" : "-2h", until : "now", format : "json" }');
     R := TStringList.Create;
     R.Delimiter := '&';
     //s3:= 'alias(statsd.fakesite.counters.session_start.desktop.count, ''memory'')';
-    R.values['target'] := URLEncode(s2);
-    R.values['from'] := '-2h';
-    R.values['until'] := 'now';
-    R.values['format'] := 'json';
-    R.values['maxDataPoints'] := '1800';
+
+    //R.values['target'] := URLEncode(s2);
+    //R.values['from'] := '-2h';
+    //R.values['until'] := 'now';
+    //R.values['format'] := 'json';
+    //R.values['maxDataPoints'] := '1800';
+
+    R.values['db'] := 'site';
+    R.values['q'] := URLEncode('SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"');
+    R.values['epoch'] := 'ms';
+    //R.values['from'] := '-2h';
+    //R.values['until'] := 'now';
+    //R.values['format'] := 'json';
+    //R.values['maxDataPoints'] := '1800';
+
     //s3:= 'target=alias(statsd.fakesite.counters.session_start.desktop.count%2C%20''memory'')&from=-2h&until=now&format=json';
     Memo1.Lines.Add(R.DelimitedText);
 
     with TFPHttpClient.Create(nil) do
         try
             AllowRedirect := True;
-            AddHeader('Content-Type', 'application/json');
-            AddHeader('Accept', 'application/json');
-            S := FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
+            //AddHeader('Content-Type', 'application/json');
+            //AddHeader('Accept', 'application/json');
+            //S := FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
+            S := Get('http://play.grafana.org/api/datasources/proxy/2/query?' + R.DelimitedText);
+            //s2:= 'http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"&epoch=ms';
+            //S:= Get(s2);
         finally
             Free;
         end;
     jData := GetJSON(S);
-    jd2 := jData.GetPath('[0].datapoints');
+    //Memo1.Lines.Add(jData.FormatJSON());
+    jd2 := jData.GetPath('results[0].series[0].values');
     jArray := TJSONArray(jd2);
     //jArray.(TJSONArray(jd2));
 
@@ -138,12 +152,12 @@ begin
     i := 0;
     for jElem in jArray do
     begin
-        dtime := jElem.Value.GetPath('[1]').AsString;
-        if (jElem.Value.GetPath('[0]').IsNull) then
+        dtime := jElem.Value.GetPath('[0]').AsString;
+        if (jElem.Value.GetPath('[1]').IsNull) then
             dvalue := lastDValue
         else
         begin
-            dvalue := jElem.Value.GetPath('[0]').AsFloat;
+            dvalue := jElem.Value.GetPath('[1]').AsFloat;
             lastDValue := dvalue;
         end;
         SetLength(dArray, i + 1);
