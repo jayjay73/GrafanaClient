@@ -1,22 +1,21 @@
 object Form1: TForm1
   Left = 705
-  Height = 721
+  Height = 755
   Top = 347
   Width = 812
   ActiveControl = OKButton
   Caption = 'Form1'
-  ClientHeight = 721
+  ClientHeight = 755
   ClientWidth = 812
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
   DesignTimePPI = 106
   OnCreate = FormCreate
-  LCLVersion = '1.8.0.4'
   Visible = False
   object OKButton: TButton
     Left = 711
     Height = 24
-    Top = 48
+    Top = 168
     Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Go!'
@@ -26,7 +25,7 @@ object Form1: TForm1
   object CancelButton: TButton
     Left = 711
     Height = 24
-    Top = 679
+    Top = 713
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Clear'
@@ -35,13 +34,13 @@ object Form1: TForm1
   end
   object Edit1: TEdit
     AnchorSideLeft.Side = asrBottom
-    Left = 96
+    Left = 112
     Height = 25
     Top = 24
     Width = 690
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 2
-    Text = 'http://play.grafana.org/api/dashboards/db/grafana-play-home'
+    Text = 'http://play.grafana.org/api/datasources/proxy/2/query'
   end
   object Memo1: TMemo
     AnchorSideTop.Control = PaintBox1
@@ -49,8 +48,8 @@ object Form1: TForm1
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 8
-    Height = 265
-    Top = 405
+    Height = 200
+    Top = 501
     Width = 778
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Top = 5
@@ -63,7 +62,7 @@ object Form1: TForm1
     AnchorSideRight.Side = asrBottom
     Left = 8
     Height = 280
-    Top = 120
+    Top = 216
     Width = 778
     Anchors = [akTop, akLeft, akRight]
     Color = clGray
@@ -72,59 +71,60 @@ object Form1: TForm1
     OnPaint = PaintBox1Paint
   end
   object Edit2: TEdit
-    Left = 96
+    Left = 112
     Height = 25
-    Top = 48
-    Width = 80
+    Top = 56
+    Width = 296
     TabOrder = 4
-    Text = '1'
+    Text = 'site'
   end
   object Label1: TLabel
     Left = 8
     Height = 17
     Top = 24
-    Width = 95
-    Caption = 'Dahsboard URL:'
+    Width = 96
+    Caption = 'Query Base URL:'
     ParentColor = False
   end
   object Label2: TLabel
-    Left = 61
+    Left = 85
     Height = 17
-    Top = 48
-    Width = 28
-    Caption = 'Row:'
+    Top = 56
+    Width = 19
+    Caption = 'DB:'
     ParentColor = False
   end
   object Label3: TLabel
-    Left = 208
+    Left = 66
     Height = 17
-    Top = 48
-    Width = 34
-    Caption = 'Panel:'
+    Top = 88
+    Width = 38
+    Caption = 'Query:'
     ParentColor = False
   end
   object Edit3: TEdit
-    Left = 248
+    Left = 112
     Height = 25
-    Top = 48
-    Width = 80
+    Top = 88
+    Width = 690
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 5
-    Text = '0'
+    Text = 'SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"'
   end
   object Label4: TLabel
-    Left = 360
+    Left = 65
     Height = 17
-    Top = 48
-    Width = 38
-    Caption = 'Target'
+    Top = 120
+    Width = 39
+    Caption = 'Epoch:'
     ParentColor = False
   end
   object Edit4: TEdit
-    Left = 400
+    Left = 112
     Height = 25
-    Top = 48
+    Top = 120
     Width = 80
     TabOrder = 6
-    Text = '0'
+    Text = 'ms'
   end
 end

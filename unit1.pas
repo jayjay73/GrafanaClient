@@ -76,58 +76,16 @@ end;
 
 procedure TForm1.OKButtonClick(Sender: TObject);
 begin
-    with TFPHttpClient.Create(nil) do
-        try
-            AllowRedirect := True;
-            S := Get(Edit1.Text);
-        finally
-            Free;
-        end;
-    //Label1.Caption:= S;
-    //Memo1.Lines.Clear;
-    //jData:= GetJSON(S);
-    //Memo1.Lines.Add(jData.FormatJSON);
-
-    //jObject := TJSONObject(jData);
-    //jo2:= jObject.Get('dashboard', TJSONObject(GetJSON('{}')));
-    //ja2:= jo2.Get('rows', TJSONArray(GetJSON('{}')));
-    //jo3:= ja2.Objects[1];
-    //ja3:= jo3.Get('panels', TJSONArray(GetJSON('{}')));
-    //Memo1.Lines.Add(ja3.Extract(0).FormatJSON);
-
-    needle := 'dashboard.rows[' + Edit2.Text + '].panels[' + Edit3.Text +
-        '].targets[' + Edit4.Text + '].target';
-    try
-        jData := GetJSON(S);
-        s2 := jData.GetPath(needle).asJSON;
-    except
-        on e: EJSON do
-            Memo1.Lines.Add(e.toString);
-    end;
-    s2 := s2.Trim('"');
-    //Memo1.Lines.Add(s2);
-
-    //jd3:= GetJSON('{ "target" : [ ' + s2 + ' ], "from" : "-2h", until : "now", format : "json" }');
     R := TStringList.Create;
     R.Delimiter := '&';
-    //s3:= 'alias(statsd.fakesite.counters.session_start.desktop.count, ''memory'')';
 
-    //R.values['target'] := URLEncode(s2);
-    //R.values['from'] := '-2h';
-    //R.values['until'] := 'now';
-    //R.values['format'] := 'json';
-    //R.values['maxDataPoints'] := '1800';
 
-    R.values['db'] := 'telegraf';
+    R.values['db'] := Edit2.Text;
     //R.values['q'] := URLEncode('SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"');
-    R.values['q'] := URLEncode('SELECT mean("IdleWorkers") FROM "apache" WHERE "host" =~ /^(fidipmid01\.dfd-hamburg\.de|fidipmid31\.dfd-hamburg\.de)$/ AND "port" <> ''44000'' AND time > now() - 1h GROUP BY time(30s), "tag1" fill(null)');
-    R.values['epoch'] := 'ms';
-    //R.values['from'] := '-2h';
-    //R.values['until'] := 'now';
-    //R.values['format'] := 'json';
-    //R.values['maxDataPoints'] := '1800';
+    //R.values['q'] := URLEncode('SELECT mean("IdleWorkers") FROM "apache" WHERE "host" =~ /^(fidipmid01\.dfd-hamburg\.de|fidipmid31\.dfd-hamburg\.de)$/ AND "port" <> ''44000'' AND time > now() - 1h GROUP BY time(30s), "tag1" fill(null)');
+    R.values['q'] := URLEncode(Edit3.Text);
+    R.values['epoch'] := Edit4.Text;
 
-    //s3:= 'target=alias(statsd.fakesite.counters.session_start.desktop.count%2C%20''memory'')&from=-2h&until=now&format=json';
     Memo1.Lines.Add(R.DelimitedText);
 
     with TFPHttpClient.Create(nil) do
@@ -136,7 +94,7 @@ begin
             //AddHeader('Content-Type', 'application/json');
             //AddHeader('Accept', 'application/json');
             //S := FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
-            S := Get('http://grafana.dfd-hamburg.de/api/datasources/proxy/9/query?' + R.DelimitedText);
+            S := Get(Edit1.Text + '?' + R.DelimitedText);
             //s2:= 'http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"&epoch=ms';
             //S:= Get(s2);
         finally
