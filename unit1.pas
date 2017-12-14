@@ -118,8 +118,9 @@ begin
     //R.values['format'] := 'json';
     //R.values['maxDataPoints'] := '1800';
 
-    R.values['db'] := 'site';
-    R.values['q'] := URLEncode('SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"');
+    R.values['db'] := 'telegraf';
+    //R.values['q'] := URLEncode('SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"');
+    R.values['q'] := URLEncode('SELECT mean("IdleWorkers") FROM "apache" WHERE "host" =~ /^(fidipmid01\.dfd-hamburg\.de|fidipmid31\.dfd-hamburg\.de)$/ AND "port" <> ''44000'' AND time > now() - 1h GROUP BY time(30s), "tag1" fill(null)');
     R.values['epoch'] := 'ms';
     //R.values['from'] := '-2h';
     //R.values['until'] := 'now';
@@ -135,7 +136,7 @@ begin
             //AddHeader('Content-Type', 'application/json');
             //AddHeader('Accept', 'application/json');
             //S := FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
-            S := Get('http://play.grafana.org/api/datasources/proxy/2/query?' + R.DelimitedText);
+            S := Get('http://grafana.dfd-hamburg.de/api/datasources/proxy/9/query?' + R.DelimitedText);
             //s2:= 'http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"&epoch=ms';
             //S:= Get(s2);
         finally
@@ -143,7 +144,8 @@ begin
         end;
     jData := GetJSON(S);
     //Memo1.Lines.Add(jData.FormatJSON());
-    jd2 := jData.GetPath('results[0].series[0].values');
+    //jd2 := jData.GetPath('results[0].series[0].values');
+    jd2 := jData.GetPath('results[0].series[5].values');
     jArray := TJSONArray(jd2);
     //jArray.(TJSONArray(jd2));
 
