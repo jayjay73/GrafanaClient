@@ -21,9 +21,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="58"/>
-        <CursorPos Y="88"/>
-        <UsageCount Value="33"/>
+        <TopLine Value="60"/>
+        <CursorPos Y="102"/>
+        <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -36,45 +36,45 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
         <CursorPos X="33" Y="115"/>
-        <UsageCount Value="182"/>
+        <UsageCount Value="179"/>
       </Unit2>
       <Unit3>
         <Filename Value="C:\Development\FreePascal\fpc\rtl\objpas\classes\stringl.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="533"/>
         <CursorPos X="20" Y="551"/>
-        <UsageCount Value="80"/>
+        <UsageCount Value="77"/>
       </Unit3>
       <Unit4>
         <Filename Value="C:\Development\FreePascal\fpc\packages\fcl-web\src\base\fphttpclient.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1551"/>
         <CursorPos X="18" Y="1577"/>
-        <UsageCount Value="80"/>
+        <UsageCount Value="77"/>
       </Unit4>
       <Unit5>
         <Filename Value="C:\Development\FreePascal\fpc\rtl\inc\objpash.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="178"/>
         <CursorPos X="25" Y="206"/>
-        <UsageCount Value="80"/>
+        <UsageCount Value="77"/>
       </Unit5>
       <Unit6>
         <Filename Value="C:\Development\FreePascal\fpc\rtl\inc\objpas.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="256"/>
         <CursorPos X="12" Y="286"/>
-        <UsageCount Value="80"/>
+        <UsageCount Value="77"/>
       </Unit6>
       <Unit7>
         <Filename Value="C:\Development\FreePascal\fpc\packages\fcl-json\src\fpjson.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2564"/>
         <CursorPos X="33" Y="2598"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="35"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="7" HistoryIndex="6">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
         <Filename Value="unit1.pas"/>
         <Caret Line="170" Column="27" TopLine="167"/>
@@ -103,6 +103,10 @@
         <Filename Value="unit1.pas"/>
         <Caret Line="28" TopLine="3"/>
       </Position7>
+      <Position8>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="157" TopLine="136"/>
+      </Position8>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>

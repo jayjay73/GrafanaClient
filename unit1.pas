@@ -27,7 +27,6 @@ type
         procedure FormCreate(Sender: TObject);
         procedure OKButtonClick(Sender: TObject);
         procedure CancelButtonClick(Sender: TObject);
-        procedure PaintBox1Click(Sender: TObject);
         procedure PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
         procedure PaintBox1Paint(Sender: TObject);
 
@@ -41,12 +40,12 @@ type
 
 var
     Form1: TForm1;
-    S, needle, s2, s3, dtime: string;
+    S, needle, s2, s3, dtime, timecolumn, valuename: string;
     jData, jd2, jd3: TJSONData;
     jObject, jo2, jo3: TJSONObject;
     jArray, ja2, ja3: TJSONArray;
     R: TStrings;
-    jElem: TJSONEnum;
+    jElem, je2, je3: TJSONEnum;
     i: integer;
     dvalue, maxv, minv, xstep, yscale, lastDValue: double;
     dArray: array of double;
@@ -79,10 +78,7 @@ begin
     R := TStringList.Create;
     R.Delimiter := '&';
 
-
     R.values['db'] := Edit2.Text;
-    //R.values['q'] := URLEncode('SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"');
-    //R.values['q'] := URLEncode('SELECT mean("IdleWorkers") FROM "apache" WHERE "host" =~ /^(fidipmid01\.dfd-hamburg\.de|fidipmid31\.dfd-hamburg\.de)$/ AND "port" <> ''44000'' AND time > now() - 1h GROUP BY time(30s), "tag1" fill(null)');
     R.values['q'] := URLEncode(Edit3.Text);
     R.values['epoch'] := Edit4.Text;
 
@@ -91,21 +87,34 @@ begin
     with TFPHttpClient.Create(nil) do
         try
             AllowRedirect := True;
-            //AddHeader('Content-Type', 'application/json');
-            //AddHeader('Accept', 'application/json');
+            AddHeader('Content-Type', 'application/json');
+            AddHeader('Accept', 'application/json');
             //S := FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
             S := Get(Edit1.Text + '?' + R.DelimitedText);
-            //s2:= 'http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"&epoch=ms';
-            //S:= Get(s2);
         finally
             Free;
         end;
     jData := GetJSON(S);
     //Memo1.Lines.Add(jData.FormatJSON());
     //jd2 := jData.GetPath('results[0].series[0].values');
+
+    jd3:= jData.GetPath('results[0].series[5].columns');
+    ja3:= TJSONArray(jd3);
+    for je3 in ja3 do
+    begin
+        //Memo1.Lines.Add(je3.Value.AsString);
+        if (je3.Value.AsString = 'time') then
+        begin
+             //Memo1.Lines.Add(je3.Key);
+             timecolumn:= je3.Key;
+        end
+        else valuename:= je3.Value.AsString;
+    end;
+    Memo1.Lines.Add(timecolumn);
+    Memo1.Lines.Add(valuename);
+
     jd2 := jData.GetPath('results[0].series[5].values');
     jArray := TJSONArray(jd2);
-    //jArray.(TJSONArray(jd2));
 
     Memo1.Lines.Add(DateTimeToStr(Now));
     lastDValue := 0;
@@ -153,18 +162,6 @@ begin
     //Memo1.Lines.Add(PaintBox1.Canvas.Height.ToString);
     //Memo1.Lines.Add(PaintBox1.ClientWidth.ToString);
     //Memo1.Lines.Add(PaintBox1.ClientHeight.ToString);
-end;
-
-procedure TForm1.PaintBox1Click(Sender: TObject);
-var
-    n: integer;
-
-begin
-    randomize;
-    Memo1.Lines.Add(DateTimeToStr(Now));
-    for n := 1 to 100000 do
-        PaintBox1.Canvas.LineTo(random(200), random(200));
-    Memo1.Lines.Add(DateTimeToStr(Now));
 end;
 
 procedure TForm1.PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);

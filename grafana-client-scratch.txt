@@ -36,3 +36,4 @@ q=SELECT mean("IdleWorkers") FROM "apache" WHERE "host" =~ /^(fidipmid01\.dfd-ha
 epoch=ms
 
 http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT%20value%20FROM%20%22logins.count%22%20WHERE%20%28%22datacenter%22%20%3D~%20/%5EEurope%24/%20AND%20%22hostname%22%20%3D~%20/%5Eserver3%24/%29%20AND%20time%20%3E%3D%20now%28%29%20-%201h%20GROUP%20BY%20%20%22hostname%22&epoch=ms
+
