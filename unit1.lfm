@@ -9,7 +9,6 @@ object Form1: TForm1
   ClientWidth = 812
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
-  DesignTimePPI = 106
   OnCreate = FormCreate
   Visible = False
   object OKButton: TButton
@@ -35,7 +34,7 @@ object Form1: TForm1
   object Edit1: TEdit
     AnchorSideLeft.Side = asrBottom
     Left = 112
-    Height = 25
+    Height = 21
     Top = 24
     Width = 690
     Anchors = [akTop, akLeft, akRight]
@@ -71,39 +70,39 @@ object Form1: TForm1
   end
   object Edit2: TEdit
     Left = 112
-    Height = 25
+    Height = 21
     Top = 56
     Width = 296
     TabOrder = 4
     Text = 'site'
   end
   object Label1: TLabel
-    Left = 8
-    Height = 17
+    Left = 14
+    Height = 13
     Top = 24
-    Width = 96
-    Caption = 'Query Base URL:'
+    Width = 84
+    Caption = 'Data source URL:'
     ParentColor = False
   end
   object Label2: TLabel
-    Left = 85
-    Height = 17
+    Left = 81
+    Height = 13
     Top = 56
-    Width = 19
+    Width = 17
     Caption = 'DB:'
     ParentColor = False
   end
   object Label3: TLabel
-    Left = 66
-    Height = 17
+    Left = 64
+    Height = 13
     Top = 88
-    Width = 38
+    Width = 34
     Caption = 'Query:'
     ParentColor = False
   end
   object Edit3: TEdit
     Left = 112
-    Height = 25
+    Height = 21
     Top = 88
     Width = 690
     Anchors = [akTop, akLeft, akRight]
@@ -112,15 +111,15 @@ object Form1: TForm1
   end
   object Label4: TLabel
     Left = 65
-    Height = 17
+    Height = 13
     Top = 120
-    Width = 39
+    Width = 33
     Caption = 'Epoch:'
     ParentColor = False
   end
   object Edit4: TEdit
     Left = 112
-    Height = 25
+    Height = 21
     Top = 120
     Width = 80
     TabOrder = 6

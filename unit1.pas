@@ -98,7 +98,8 @@ begin
     //Memo1.Lines.Add(jData.FormatJSON());
     //jd2 := jData.GetPath('results[0].series[0].values');
 
-    jd3:= jData.GetPath('results[0].series[5].columns');
+    //jd3:= jData.GetPath('results[0].series[5].columns');
+    jd3:= jData.GetPath('results[0].series[0].columns');
     ja3:= TJSONArray(jd3);
     for je3 in ja3 do
     begin
@@ -113,7 +114,8 @@ begin
     Memo1.Lines.Add(timecolumn);
     Memo1.Lines.Add(valuename);
 
-    jd2 := jData.GetPath('results[0].series[5].values');
+    //jd2 := jData.GetPath('results[0].series[5].values');
+    jd2 := jData.GetPath('results[0].series[0].values');
     jArray := TJSONArray(jd2);
 
     Memo1.Lines.Add(DateTimeToStr(Now));
@@ -173,6 +175,7 @@ end;
 procedure TForm1.PaintBox1Paint(Sender: TObject);
 var
     n, w, h: integer;
+    yoffset: double;
 begin
     PaintBox1.Canvas.Clear;
     if (numDatapoints > 0) then
@@ -180,16 +183,21 @@ begin
         w := PaintBox1.ClientWidth;
         h := PaintBox1.ClientHeight;
         xstep := w / numDatapoints;
-        yscale := h / maxv;
+        yscale := h / (maxv - minv);
+        yoffset:= 0 - minv;
 
         Memo1.Lines.Add('w: ' + w.ToString + ' h: ' + h.ToString);
         Memo1.Lines.Add('xstep: ' + xstep.ToString);
         Memo1.Lines.Add('yscale: ' + yscale.ToString);
+        Memo1.Lines.Add('yoffset: ' + yoffset.ToString);
+
+        PaintBox1.Canvas.MoveTo(0, h - Round(yoffset * yscale));
+        PaintBox1.Canvas.LineTo(w, h - Round(yoffset * yscale));
 
         for i := 0 to numDatapoints do
         begin // paint lines between datapoints
             x := Round(i * xstep);
-            y := Round(dArray[i] * yscale);
+            y := Round((dArray[i] + yoffset) * yscale);
             if (i = 0) then
             begin
                 PaintBox1.Canvas.MoveTo(x, h - y);
