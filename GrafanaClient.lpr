@@ -1,11 +1,14 @@
 program GrafanaClient;
 
 {$mode delphi}
+//{$mode objfpc}{$H+}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
+  //Classes,
+  fphttpclient,
   Interfaces, // this includes the LCL widgetset
   Forms, Unit1;
 

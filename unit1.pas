@@ -1,12 +1,28 @@
 unit Unit1;
 
-{$mode delphi}
-
+//{$mode delphi}
+{$mode objfpc}{$H+}
 interface
 
 uses
     Math, Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
     ExtCtrls, Menus, Grids, fphttpclient, fpjson, jsonparser, HTTPDefs;
+
+{ WebGetThread }
+
+Type
+  TWebGetThread = class(TThread)
+  private
+    R: TStrings;
+    S: String;
+    HTTPClient: TFPHttpClient;
+    procedure DoSyncGetRequestParams;
+    procedure DoSyncCopyResponseData;
+  protected
+    procedure Execute; override;
+  public
+    Constructor Create(CreateSuspended : boolean);
+  end;
 
 { TForm1 }
 
@@ -44,12 +60,13 @@ var
     jData, jd2, jd3: TJSONData;
     jObject, jo2, jo3: TJSONObject;
     jArray, ja2, ja3: TJSONArray;
-    R: TStrings;
     jElem, je2, je3: TJSONEnum;
     i: integer;
     dvalue, maxv, minv, xstep, yscale, lastDValue: double;
     dArray: array of double;
     x, y, w, h, numDatapoints: integer;
+    WebGetThread: TWebGetThread;
+    webGetThreadRunning: Boolean;
 
 implementation
 
@@ -71,82 +88,124 @@ begin
     end;
 end;
 
+{ WebGetThread}
+
+constructor TWebGetThread.Create(CreateSuspended : boolean);
+begin
+  // because this is black box in OOP and can reset inherited to the opposite again...
+  inherited Create(CreateSuspended);
+  FreeOnTerminate := True;
+end;
+
+// this method is executed by the main thread and can therefore access all GUI elements.
+procedure TWebGetThread.DoSyncGetRequestParams;
+begin
+  // get request params from main thread
+    R := TStringList.Create;
+    R.Delimiter := '&';
+    R.values['db'] := Form1.Edit2.Text;
+    R.values['q'] := URLEncode(Form1.Edit3.Text);
+    R.values['epoch'] := Form1.Edit4.Text;
+    Form1.Memo1.Lines.Add(R.DelimitedText);
+end;
+
+procedure TWebGetThread.DoSyncCopyResponseData;
+begin
+  // pass data to main thread here
+
+  jData := GetJSON(S);
+  //Memo1.Lines.Add(jData.FormatJSON());
+  //jd2 := jData.GetPath('results[0].series[0].values');
+
+  //jd3:= jData.GetPath('results[0].series[5].columns');
+  jd3:= jData.GetPath('results[0].series[0].columns');
+  ja3:= TJSONArray(jd3);
+  for je3 in ja3 do
+  begin
+      //Memo1.Lines.Add(je3.Value.AsString);
+      if (je3.Value.AsString = 'time') then
+      begin
+           //Memo1.Lines.Add(je3.Key);
+           timecolumn:= je3.Key;
+      end
+      else valuename:= je3.Value.AsString;
+  end;
+  Form1.Memo1.Lines.Add(timecolumn);
+  Form1.Memo1.Lines.Add(valuename);
+
+  //jd2 := jData.GetPath('results[0].series[5].values');
+  jd2 := jData.GetPath('results[0].series[0].values');
+  jArray := TJSONArray(jd2);
+
+  Form1.Memo1.Lines.Add(DateTimeToStr(Now));
+  lastDValue := 0;
+  i := 0;
+  for jElem in jArray do
+  begin
+      dtime := jElem.Value.GetPath('[0]').AsString;
+      if (jElem.Value.GetPath('[1]').IsNull) then
+          dvalue := lastDValue
+      else
+      begin
+          dvalue := jElem.Value.GetPath('[1]').AsFloat;
+          lastDValue := dvalue;
+      end;
+      SetLength(dArray, i + 1);
+      dArray[i] := dvalue;
+      maxv := MaxValue(dArray);
+      minv := MinValue(dArray);
+      //Memo1.Lines.Add(i.toString + ': ' + dvalue.ToString);
+      i := i + 1;
+  end;
+  numDatapoints := i - 1;
+  Form1.Memo1.Lines.Add('Datapoints: ' + numDatapoints.ToString);
+  Form1.Memo1.Lines.Add('min value: ' + minv.ToString);
+  Form1.Memo1.Lines.Add('max value: ' + maxv.ToString);
+  //Memo1.Lines.Add(jArray.FormatJSON);
+  Form1.Memo1.Lines.Add(DateTimeToStr(Now));
+
+  Form1.PaintBox1.Invalidate;
+
+end;
+
+procedure TWebGetThread.Execute;
+//var
+begin
+  // get Request parameters
+  Synchronize(@DoSyncGetRequestParams);
+//  while (not Terminated) do
+//    begin
+      // make http call
+      HttpClient:= TFPHttpClient.Create(nil);
+      try
+         HttpClient.AllowRedirect := True;
+         HttpClient.AddHeader('Content-Type', 'application/json');
+         HttpClient.AddHeader('Accept', 'application/json');
+         //S := HttpClient.FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
+         S := HttpClient.Get(Form1.Edit1.Text + '?' + R.DelimitedText);
+      finally
+         HttpClient.Free;
+      end;
+      // copy back result
+      Synchronize(@DoSyncCopyResponseData);
+//      Sleep(10000);
+//    end;
+    webGetThreadRunning:= false;
+    Terminate;
+end;
+
 { TForm1 }
 
 procedure TForm1.OKButtonClick(Sender: TObject);
 begin
-    R := TStringList.Create;
-    R.Delimiter := '&';
-
-    R.values['db'] := Edit2.Text;
-    R.values['q'] := URLEncode(Edit3.Text);
-    R.values['epoch'] := Edit4.Text;
-
-    Memo1.Lines.Add(R.DelimitedText);
-
-    with TFPHttpClient.Create(nil) do
-        try
-            AllowRedirect := True;
-            AddHeader('Content-Type', 'application/json');
-            AddHeader('Accept', 'application/json');
-            //S := FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
-            S := Get(Edit1.Text + '?' + R.DelimitedText);
-        finally
-            Free;
-        end;
-    jData := GetJSON(S);
-    //Memo1.Lines.Add(jData.FormatJSON());
-    //jd2 := jData.GetPath('results[0].series[0].values');
-
-    //jd3:= jData.GetPath('results[0].series[5].columns');
-    jd3:= jData.GetPath('results[0].series[0].columns');
-    ja3:= TJSONArray(jd3);
-    for je3 in ja3 do
-    begin
-        //Memo1.Lines.Add(je3.Value.AsString);
-        if (je3.Value.AsString = 'time') then
-        begin
-             //Memo1.Lines.Add(je3.Key);
-             timecolumn:= je3.Key;
-        end
-        else valuename:= je3.Value.AsString;
-    end;
-    Memo1.Lines.Add(timecolumn);
-    Memo1.Lines.Add(valuename);
-
-    //jd2 := jData.GetPath('results[0].series[5].values');
-    jd2 := jData.GetPath('results[0].series[0].values');
-    jArray := TJSONArray(jd2);
-
-    Memo1.Lines.Add(DateTimeToStr(Now));
-    lastDValue := 0;
-    i := 0;
-    for jElem in jArray do
-    begin
-        dtime := jElem.Value.GetPath('[0]').AsString;
-        if (jElem.Value.GetPath('[1]').IsNull) then
-            dvalue := lastDValue
-        else
-        begin
-            dvalue := jElem.Value.GetPath('[1]').AsFloat;
-            lastDValue := dvalue;
-        end;
-        SetLength(dArray, i + 1);
-        dArray[i] := dvalue;
-        maxv := MaxValue(dArray);
-        minv := MinValue(dArray);
-        //Memo1.Lines.Add(i.toString + ': ' + dvalue.ToString);
-        i := i + 1;
-    end;
-    numDatapoints := i - 1;
-    Memo1.Lines.Add('Datapoints: ' + numDatapoints.ToString);
-    Memo1.Lines.Add('min value: ' + minv.ToString);
-    Memo1.Lines.Add('max value: ' + maxv.ToString);
-    //Memo1.Lines.Add(jArray.FormatJSON);
-    Memo1.Lines.Add(DateTimeToStr(Now));
-
-    PaintBox1.Invalidate;
-
+  // create thread
+  if ( not webGetThreadRunning) then
+  begin
+      webGetThreadRunning:= true;
+      WebGetThread:= TWebGetThread. Create(false);
+      // trigger thread start
+      //ThreadSwitch()
+  end;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
