@@ -2,19 +2,19 @@ object Form1: TForm1
   Left = 705
   Height = 755
   Top = 347
-  Width = 812
+  Width = 816
   ActiveControl = OKButton
   Caption = 'Form1'
   ClientHeight = 755
-  ClientWidth = 812
+  ClientWidth = 816
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
   OnCreate = FormCreate
   Visible = False
   object OKButton: TButton
-    Left = 711
+    Left = 638
     Height = 24
-    Top = 168
+    Top = 148
     Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Go!'
@@ -22,7 +22,7 @@ object Form1: TForm1
     TabOrder = 0
   end
   object CancelButton: TButton
-    Left = 711
+    Left = 733
     Height = 24
     Top = 713
     Width = 75
@@ -36,7 +36,7 @@ object Form1: TForm1
     Left = 112
     Height = 21
     Top = 24
-    Width = 690
+    Width = 696
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 2
     Text = 'http://play.grafana.org/api/datasources/proxy/2/query'
@@ -49,7 +49,7 @@ object Form1: TForm1
     Left = 8
     Height = 200
     Top = 501
-    Width = 778
+    Width = 800
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Top = 5
     Lines.Strings = (
@@ -62,7 +62,7 @@ object Form1: TForm1
     Left = 8
     Height = 280
     Top = 216
-    Width = 778
+    Width = 800
     Anchors = [akTop, akLeft, akRight]
     Color = clGray
     ParentColor = False
@@ -104,7 +104,7 @@ object Form1: TForm1
     Left = 112
     Height = 21
     Top = 88
-    Width = 690
+    Width = 696
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 5
     Text = 'SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"'
@@ -124,5 +124,33 @@ object Form1: TForm1
     Width = 80
     TabOrder = 6
     Text = 'ms'
+  end
+  object StopButton: TButton
+    Left = 733
+    Height = 25
+    Top = 148
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Stop'
+    OnClick = StopButtonClick
+    TabOrder = 7
+  end
+  object Label5: TLabel
+    Left = 30
+    Height = 13
+    Top = 152
+    Width = 68
+    Caption = 'Auto Refresh:'
+    ParentColor = False
+  end
+  object Edit5: TEdit
+    Left = 112
+    Height = 21
+    Top = 152
+    Width = 80
+    NumbersOnly = True
+    OnExit = Edit5Exit
+    TabOrder = 8
+    Text = '0'
   end
 end

@@ -6,7 +6,7 @@ interface
 
 uses
     Math, Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-    ExtCtrls, Menus, Grids, fphttpclient, fpjson, jsonparser, HTTPDefs;
+    ExtCtrls, Menus, Grids, fphttpclient, fpjson, jsonparser, HTTPDefs, DateUtils;
 
 { WebGetThread }
 
@@ -16,18 +16,25 @@ Type
     R: TStrings;
     S: String;
     HTTPClient: TFPHttpClient;
+    fRefresh: Integer;
+    timeAtLAstRequest: TDateTime;
     procedure DoSyncGetRequestParams;
     procedure DoSyncCopyResponseData;
   protected
     procedure Execute; override;
   public
     Constructor Create(CreateSuspended : boolean);
+    class procedure CreateOrRecycle(var instanceVar: TWebGetThread);
+    property Refresh: Integer read fRefresh write fRefresh;
   end;
 
 { TForm1 }
 
 type
     TForm1 = class(TForm)
+        Edit5: TEdit;
+        Label5: TLabel;
+        StopButton: TButton;
         Edit1: TEdit;
         Edit2: TEdit;
         Edit3: TEdit;
@@ -40,11 +47,13 @@ type
         OKButton: TButton;
         CancelButton: TButton;
         PaintBox1: TPaintBox;
+        procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure OKButtonClick(Sender: TObject);
         procedure CancelButtonClick(Sender: TObject);
         procedure PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
         procedure PaintBox1Paint(Sender: TObject);
+        procedure StopButtonClick(Sender: TObject);
 
     private
         { private declarations }
@@ -65,8 +74,8 @@ var
     dvalue, maxv, minv, xstep, yscale, lastDValue: double;
     dArray: array of double;
     x, y, w, h, numDatapoints: integer;
-    WebGetThread: TWebGetThread;
-    webGetThreadRunning: Boolean;
+    WebGetThread: TWebGetThread = nil;
+    dataRefresh: Integer;
 
 implementation
 
@@ -90,11 +99,23 @@ end;
 
 { WebGetThread}
 
+class procedure TWebGetThread.CreateOrRecycle(var instanceVar: TWebGetThread);
+begin
+    if (instanceVar = nil) then
+        instanceVar:= TWebGetThread.Create(false)
+    else if (instanceVar.Finished) then
+    begin
+         instanceVar.Free;
+         instanceVar:= TWebGetThread.Create(false);
+    end;
+end;
+
 constructor TWebGetThread.Create(CreateSuspended : boolean);
 begin
   // because this is black box in OOP and can reset inherited to the opposite again...
   inherited Create(CreateSuspended);
-  FreeOnTerminate := True;
+  FreeOnTerminate := False;
+  fRefresh:= 0;
 end;
 
 // this method is executed by the main thread and can therefore access all GUI elements.
@@ -107,6 +128,7 @@ begin
     R.values['q'] := URLEncode(Form1.Edit3.Text);
     R.values['epoch'] := Form1.Edit4.Text;
     Form1.Memo1.Lines.Add(R.DelimitedText);
+    Refresh:= dataRefresh * 1000;
 end;
 
 procedure TWebGetThread.DoSyncCopyResponseData;
@@ -173,8 +195,8 @@ procedure TWebGetThread.Execute;
 begin
   // get Request parameters
   Synchronize(@DoSyncGetRequestParams);
-//  while (not Terminated) do
-//    begin
+  while (not Terminated) do
+    begin
       // make http call
       HttpClient:= TFPHttpClient.Create(nil);
       try
@@ -188,30 +210,35 @@ begin
       end;
       // copy back result
       Synchronize(@DoSyncCopyResponseData);
-//      Sleep(10000);
-//    end;
-    webGetThreadRunning:= false;
-    Terminate;
+      if (fRefresh = 0) then
+         Terminate;
+      timeAtLastRequest:= Now;
+      while (not Terminated) do
+      begin
+        if (MilliSecondsBetween(timeAtLastRequest, Now) > fRefresh) then
+          break;
+        Sleep(100);
+      end;
+    end;
 end;
 
 { TForm1 }
 
 procedure TForm1.OKButtonClick(Sender: TObject);
 begin
-  // create thread
-  if ( not webGetThreadRunning) then
-  begin
-      webGetThreadRunning:= true;
-      WebGetThread:= TWebGetThread. Create(false);
-      // trigger thread start
-      //ThreadSwitch()
-  end;
+  TWebGetThread.CreateOrRecycle(WebGetThread);
+  //WebGetThread.Refresh:=5000;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
     Memo1.ScrollBars := ssVertical;
     DoubleBuffered:= True;
+end;
+
+procedure TForm1.Edit5Exit(Sender: TObject);
+begin
+    dataRefresh:= StrToInt(Edit5.Text);
 end;
 
 procedure TForm1.CancelButtonClick(Sender: TObject);
@@ -268,6 +295,12 @@ begin
             end;
         end;
     end;
+end;
+
+procedure TForm1.StopButtonClick(Sender: TObject);
+begin
+  if (WebGetThread <> nil) then
+    WebGetThread.Terminate;
 end;
 
 end.
