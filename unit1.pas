@@ -2,31 +2,32 @@ unit Unit1;
 
 //{$mode delphi}
 {$mode objfpc}{$H+}
+
 interface
 
 uses
     Math, Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-    ExtCtrls, Menus, Grids, fphttpclient, fpjson, jsonparser, HTTPDefs, DateUtils;
+    ExtCtrls, Menus, fphttpclient, fpjson, jsonparser, HTTPDefs, DateUtils;
 
 { WebGetThread }
 
-Type
-  TWebGetThread = class(TThread)
-  private
-    R: TStrings;
-    S: String;
-    HTTPClient: TFPHttpClient;
-    fRefresh: Integer;
-    timeAtLAstRequest: TDateTime;
-    procedure DoSyncGetRequestParams;
-    procedure DoSyncCopyResponseData;
-  protected
-    procedure Execute; override;
-  public
-    Constructor Create(CreateSuspended : boolean);
-    class procedure CreateOrRecycle(var instanceVar: TWebGetThread);
-    property Refresh: Integer read fRefresh write fRefresh;
-  end;
+type
+    TWebGetThread = class(TThread)
+    private
+        R: TStrings;
+        S: string;
+        HTTPClient: TFPHttpClient;
+        fRefresh: integer;
+        timeAtLAstRequest: TDateTime;
+        procedure DoSyncGetRequestParams;
+        procedure DoSyncCopyResponseData;
+    protected
+        procedure Execute; override;
+    public
+        constructor Create(CreateSuspended: boolean);
+        class procedure CreateOrRecycle(var instanceVar: TWebGetThread);
+        property Refresh: integer read fRefresh write fRefresh;
+    end;
 
 { TForm1 }
 
@@ -51,7 +52,6 @@ type
         procedure FormCreate(Sender: TObject);
         procedure OKButtonClick(Sender: TObject);
         procedure CancelButtonClick(Sender: TObject);
-        procedure PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
         procedure PaintBox1Paint(Sender: TObject);
         procedure StopButtonClick(Sender: TObject);
 
@@ -60,8 +60,6 @@ type
     public
         { public declarations }
     end;
-
-    ENeedleNotFoundException = class(Exception);
 
 var
     Form1: TForm1;
@@ -75,7 +73,7 @@ var
     dArray: array of double;
     x, y, w, h, numDatapoints: integer;
     WebGetThread: TWebGetThread = nil;
-    dataRefresh: Integer;
+    dataRefresh: integer;
 
 implementation
 
@@ -102,123 +100,123 @@ end;
 class procedure TWebGetThread.CreateOrRecycle(var instanceVar: TWebGetThread);
 begin
     if (instanceVar = nil) then
-        instanceVar:= TWebGetThread.Create(false)
-    else if (instanceVar.Finished) then
+        instanceVar := TWebGetThread.Create(False)
+    else
+    if (instanceVar.Finished) then
     begin
-         instanceVar.Free;
-         instanceVar:= TWebGetThread.Create(false);
+        instanceVar.Free;
+        instanceVar := TWebGetThread.Create(False);
     end;
 end;
 
-constructor TWebGetThread.Create(CreateSuspended : boolean);
+constructor TWebGetThread.Create(CreateSuspended: boolean);
 begin
-  // because this is black box in OOP and can reset inherited to the opposite again...
-  inherited Create(CreateSuspended);
-  FreeOnTerminate := False;
-  fRefresh:= 0;
+    inherited Create(CreateSuspended);
+    FreeOnTerminate := False;
+    fRefresh := 0;
 end;
 
 // this method is executed by the main thread and can therefore access all GUI elements.
 procedure TWebGetThread.DoSyncGetRequestParams;
 begin
-  // get request params from main thread
+    // get request params from main thread
     R := TStringList.Create;
     R.Delimiter := '&';
     R.values['db'] := Form1.Edit2.Text;
     R.values['q'] := URLEncode(Form1.Edit3.Text);
     R.values['epoch'] := Form1.Edit4.Text;
     Form1.Memo1.Lines.Add(R.DelimitedText);
-    Refresh:= dataRefresh * 1000;
+    Refresh := dataRefresh * 1000;
 end;
 
 procedure TWebGetThread.DoSyncCopyResponseData;
 begin
-  // pass data to main thread here
+    // pass data to main thread
+    jData := GetJSON(S);
+    //Memo1.Lines.Add(jData.FormatJSON());
+    //jd2 := jData.GetPath('results[0].series[0].values');
 
-  jData := GetJSON(S);
-  //Memo1.Lines.Add(jData.FormatJSON());
-  //jd2 := jData.GetPath('results[0].series[0].values');
+    //jd3:= jData.GetPath('results[0].series[5].columns');
+    jd3 := jData.GetPath('results[0].series[0].columns');
+    ja3 := TJSONArray(jd3);
+    for je3 in ja3 do
+    begin
+        //Memo1.Lines.Add(je3.Value.AsString);
+        if (je3.Value.AsString = 'time') then
+        begin
+            //Memo1.Lines.Add(je3.Key);
+            timecolumn := je3.Key;
+        end
+        else
+            valuename := je3.Value.AsString;
+    end;
+    Form1.Memo1.Lines.Add(timecolumn);
+    Form1.Memo1.Lines.Add(valuename);
 
-  //jd3:= jData.GetPath('results[0].series[5].columns');
-  jd3:= jData.GetPath('results[0].series[0].columns');
-  ja3:= TJSONArray(jd3);
-  for je3 in ja3 do
-  begin
-      //Memo1.Lines.Add(je3.Value.AsString);
-      if (je3.Value.AsString = 'time') then
-      begin
-           //Memo1.Lines.Add(je3.Key);
-           timecolumn:= je3.Key;
-      end
-      else valuename:= je3.Value.AsString;
-  end;
-  Form1.Memo1.Lines.Add(timecolumn);
-  Form1.Memo1.Lines.Add(valuename);
+    //jd2 := jData.GetPath('results[0].series[5].values');
+    jd2 := jData.GetPath('results[0].series[0].values');
+    jArray := TJSONArray(jd2);
 
-  //jd2 := jData.GetPath('results[0].series[5].values');
-  jd2 := jData.GetPath('results[0].series[0].values');
-  jArray := TJSONArray(jd2);
+    Form1.Memo1.Lines.Add(DateTimeToStr(Now));
+    lastDValue := 0;
+    i := 0;
+    for jElem in jArray do
+    begin
+        dtime := jElem.Value.GetPath('[0]').AsString;
+        if (jElem.Value.GetPath('[1]').IsNull) then
+            dvalue := lastDValue
+        else
+        begin
+            dvalue := jElem.Value.GetPath('[1]').AsFloat;
+            lastDValue := dvalue;
+        end;
+        SetLength(dArray, i + 1);
+        dArray[i] := dvalue;
+        maxv := MaxValue(dArray);
+        minv := MinValue(dArray);
+        //Memo1.Lines.Add(i.toString + ': ' + dvalue.ToString);
+        i := i + 1;
+    end;
+    numDatapoints := i - 1;
+    Form1.Memo1.Lines.Add('Datapoints: ' + numDatapoints.ToString);
+    Form1.Memo1.Lines.Add('min value: ' + minv.ToString);
+    Form1.Memo1.Lines.Add('max value: ' + maxv.ToString);
+    //Memo1.Lines.Add(jArray.FormatJSON);
+    Form1.Memo1.Lines.Add(DateTimeToStr(Now));
 
-  Form1.Memo1.Lines.Add(DateTimeToStr(Now));
-  lastDValue := 0;
-  i := 0;
-  for jElem in jArray do
-  begin
-      dtime := jElem.Value.GetPath('[0]').AsString;
-      if (jElem.Value.GetPath('[1]').IsNull) then
-          dvalue := lastDValue
-      else
-      begin
-          dvalue := jElem.Value.GetPath('[1]').AsFloat;
-          lastDValue := dvalue;
-      end;
-      SetLength(dArray, i + 1);
-      dArray[i] := dvalue;
-      maxv := MaxValue(dArray);
-      minv := MinValue(dArray);
-      //Memo1.Lines.Add(i.toString + ': ' + dvalue.ToString);
-      i := i + 1;
-  end;
-  numDatapoints := i - 1;
-  Form1.Memo1.Lines.Add('Datapoints: ' + numDatapoints.ToString);
-  Form1.Memo1.Lines.Add('min value: ' + minv.ToString);
-  Form1.Memo1.Lines.Add('max value: ' + maxv.ToString);
-  //Memo1.Lines.Add(jArray.FormatJSON);
-  Form1.Memo1.Lines.Add(DateTimeToStr(Now));
-
-  Form1.PaintBox1.Invalidate;
+    Form1.PaintBox1.Invalidate;
 
 end;
 
 procedure TWebGetThread.Execute;
 //var
 begin
-  // get Request parameters
-  Synchronize(@DoSyncGetRequestParams);
-  while (not Terminated) do
+    // get Request parameters
+    Synchronize(@DoSyncGetRequestParams);
+    while (not Terminated) do
     begin
-      // make http call
-      HttpClient:= TFPHttpClient.Create(nil);
-      try
-         HttpClient.AllowRedirect := True;
-         HttpClient.AddHeader('Content-Type', 'application/json');
-         HttpClient.AddHeader('Accept', 'application/json');
-         //S := HttpClient.FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
-         S := HttpClient.Get(Form1.Edit1.Text + '?' + R.DelimitedText);
-      finally
-         HttpClient.Free;
-      end;
-      // copy back result
-      Synchronize(@DoSyncCopyResponseData);
-      if (fRefresh = 0) then
-         Terminate;
-      timeAtLastRequest:= Now;
-      while (not Terminated) do
-      begin
-        if (MilliSecondsBetween(timeAtLastRequest, Now) > fRefresh) then
-          break;
-        Sleep(100);
-      end;
+        // make http call
+        HttpClient := TFPHttpClient.Create(nil);
+        try
+            HttpClient.AllowRedirect := True;
+            HttpClient.AddHeader('Content-Type', 'application/json');
+            HttpClient.AddHeader('Accept', 'application/json');
+            //S := HttpClient.FormPost('http://play.grafana.org/api/datasources/proxy/1/render', R.DelimitedText);
+            S := HttpClient.Get(Form1.Edit1.Text + '?' + R.DelimitedText);
+        finally
+            HttpClient.Free;
+        end;
+        // copy back result
+        Synchronize(@DoSyncCopyResponseData);
+        if (fRefresh = 0) then
+            Terminate;
+        timeAtLastRequest := Now;
+        while (not Terminated) do
+        begin
+            if (MilliSecondsBetween(timeAtLastRequest, Now) > fRefresh) then
+                break;
+            Sleep(100);
+        end;
     end;
 end;
 
@@ -226,19 +224,18 @@ end;
 
 procedure TForm1.OKButtonClick(Sender: TObject);
 begin
-  TWebGetThread.CreateOrRecycle(WebGetThread);
-  //WebGetThread.Refresh:=5000;
+    TWebGetThread.CreateOrRecycle(WebGetThread);
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
     Memo1.ScrollBars := ssVertical;
-    DoubleBuffered:= True;
+    DoubleBuffered := True;
 end;
 
 procedure TForm1.Edit5Exit(Sender: TObject);
 begin
-    dataRefresh:= StrToInt(Edit5.Text);
+    dataRefresh := StrToInt(Edit5.Text);
 end;
 
 procedure TForm1.CancelButtonClick(Sender: TObject);
@@ -250,12 +247,6 @@ begin
     //Memo1.Lines.Add(PaintBox1.Canvas.Height.ToString);
     //Memo1.Lines.Add(PaintBox1.ClientWidth.ToString);
     //Memo1.Lines.Add(PaintBox1.ClientHeight.ToString);
-end;
-
-procedure TForm1.PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
-begin
-
-    PaintBox1.Canvas.LineTo(random(200), random(200));
 end;
 
 procedure TForm1.PaintBox1Paint(Sender: TObject);
@@ -270,7 +261,7 @@ begin
         h := PaintBox1.ClientHeight;
         xstep := w / numDatapoints;
         yscale := h / (maxv - minv);
-        yoffset:= 0 - minv;
+        yoffset := 0 - minv;
 
         Memo1.Lines.Add('w: ' + w.ToString + ' h: ' + h.ToString);
         Memo1.Lines.Add('xstep: ' + xstep.ToString);
@@ -299,8 +290,8 @@ end;
 
 procedure TForm1.StopButtonClick(Sender: TObject);
 begin
-  if (WebGetThread <> nil) then
-    WebGetThread.Terminate;
+    if (WebGetThread <> nil) then
+        WebGetThread.Terminate;
 end;
 
 end.
