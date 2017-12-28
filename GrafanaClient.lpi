@@ -100,7 +100,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="GrafanaClient.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -113,6 +113,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="gchttpclientthread.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="gcHTTPClientThread"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

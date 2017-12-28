@@ -43,3 +43,71 @@ http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT%20value%2
 http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT%20%22value%22%20FROM%20%22logins.count%22%20WHERE%20(%22datacenter%22%20=~%20/^Europe$/%20AND%20%22hostname%22%20=~%20/^(server3|server4)$/)%20AND%20time%20%3E=%20now()%20-%2010m%20GROUP%20BY%20%22hostname%22&epoch=s
 1514040486
 
+    // get request params from main thread
+    R := TStringList.Create;
+    R.Delimiter := '&';
+    R.values['db'] := Form1.Edit2.Text;
+    R.values['q'] := URLEncode(Form1.Edit3.Text);
+    R.values['epoch'] := Form1.Edit4.Text;
+    Form1.Memo1.Lines.Add(R.DelimitedText);
+    Refresh := dataRefresh * 1000;
+    
+
+    // pass data to main thread
+    jData := GetJSON(S);
+    //Memo1.Lines.Add(jData.FormatJSON());
+    //jd2 := jData.GetPath('results[0].series[0].values');
+
+    //jd3:= jData.GetPath('results[0].series[5].columns');
+    jd3 := jData.GetPath('results[0].series[0].columns');
+    ja3 := TJSONArray(jd3);
+    for je3 in ja3 do
+    begin
+        //Memo1.Lines.Add(je3.Value.AsString);
+        if (je3.Value.AsString = 'time') then
+        begin
+            //Memo1.Lines.Add(je3.Key);
+            timecolumn := je3.Key;
+        end
+        else
+            valuename := je3.Value.AsString;
+    end;
+    Form1.Memo1.Lines.Add(timecolumn);
+    Form1.Memo1.Lines.Add(valuename);
+
+    //jd2 := jData.GetPath('results[0].series[5].values');
+    jd2 := jData.GetPath('results[0].series[0].values');
+    jArray := TJSONArray(jd2);
+
+    Form1.Memo1.Lines.Add(DateTimeToStr(Now));
+    lastDValue := 0;
+    i := 0;
+    for jElem in jArray do
+    begin
+        dtime := jElem.Value.GetPath('[0]').AsString;
+        if (jElem.Value.GetPath('[1]').IsNull) then
+            dvalue := lastDValue
+        else
+        begin
+            dvalue := jElem.Value.GetPath('[1]').AsFloat;
+            lastDValue := dvalue;
+        end;
+        SetLength(dArray, i + 1);
+        dArray[i] := dvalue;
+        maxv := MaxValue(dArray);
+        minv := MinValue(dArray);
+        //Memo1.Lines.Add(i.toString + ': ' + dvalue.ToString);
+        i := i + 1;
+    end;
+    numDatapoints := i - 1;
+    Form1.Memo1.Lines.Add('Datapoints: ' + numDatapoints.ToString);
+    Form1.Memo1.Lines.Add('min value: ' + minv.ToString);
+    Form1.Memo1.Lines.Add('max value: ' + maxv.ToString);
+    //Memo1.Lines.Add(jArray.FormatJSON);
+    Form1.Memo1.Lines.Add(DateTimeToStr(Now));
+
+    Form1.PaintBox1.Invalidate;
+
+            fAnswer := HttpClient.Get(fUrl + '?' + fRequest.DelimitedText);
+
+.
