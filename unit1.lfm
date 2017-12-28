@@ -132,6 +132,7 @@ object Form1: TForm1
     Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Stop'
+    Enabled = False
     OnClick = StopButtonClick
     TabOrder = 7
   end

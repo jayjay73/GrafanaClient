@@ -37,6 +37,7 @@ type
         procedure CancelButtonClick(Sender: TObject);
         procedure PaintBox1Paint(Sender: TObject);
         procedure StopButtonClick(Sender: TObject);
+        procedure WebGetThreadTerminates(Sender: TObject);
 
     private
         { private declarations }
@@ -160,11 +161,18 @@ begin
     PaintBox1.Invalidate;
 end;
 
+procedure TForm1.WebGetThreadTerminates(Sender: TObject);
+begin
+    StopButton.Enabled:= false;
+end;
+
 procedure TForm1.OKButtonClick(Sender: TObject);
 begin
     TWebGetThread.CreateOrRecycle(WebGetThread);
     WebGetThread.OnSyncRequestParams := @CopyRequest;
     WebGetThread.OnSynchResponseData := @CopyResponse;
+    WebGetThread.OnTerminate := @WebGetThreadTerminates;
+    StopButton.Enabled:= true;
 end;
 
 procedure TForm1.Edit5Exit(Sender: TObject);

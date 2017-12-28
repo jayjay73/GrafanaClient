@@ -16,6 +16,7 @@ type
         fRequest: string;
         fRefresh: integer;
         fAnswer: string;
+        getNewRequest: boolean;
         HTTPClient: TFPHttpClient;
         FSynchRequestParams: TSyncRequestParamsEvent;
         FSynchResponseData: TSyncResponseDataEvent;
@@ -41,11 +42,13 @@ begin
     if (instanceVar = nil) then
         instanceVar := TWebGetThread.Create(False)
     else
-    if (instanceVar.Finished) then
-    begin
-        instanceVar.Free;
-        instanceVar := TWebGetThread.Create(False);
-    end;
+        if (instanceVar.Finished) then
+        begin
+            instanceVar.Free;
+            instanceVar := TWebGetThread.Create(False);
+        end
+        else
+            instanceVar.getNewRequest := True;
 end;
 
 constructor TWebGetThread.Create(CreateSuspended: boolean);
@@ -53,12 +56,14 @@ begin
     inherited Create(CreateSuspended);
     FreeOnTerminate := False;
     fRefresh := 0;
+    getNewRequest := True;
 end;
 
 procedure TWebGetThread.DoSyncRequestParams;
 begin
     if Assigned(FSynchRequestParams) then
         FSynchRequestParams(fRequest, fRefresh);
+    getNewRequest := False;
 end;
 
 procedure TWebGetThread.DoSyncResponseData;
@@ -71,9 +76,11 @@ procedure TWebGetThread.Execute;
 //var
 begin
     // get Request parameters
-    Synchronize(@DoSyncRequestParams);
+
     while (not Terminated) do
     begin
+        if (getNewRequest) then
+            Synchronize(@DoSyncRequestParams);
         // make http call
         HttpClient := TFPHttpClient.Create(nil);
         try
@@ -89,7 +96,7 @@ begin
         if (fRefresh = 0) then
             Terminate;
         timeAtLastRequest := Now;
-        while (not Terminated) do
+        while (not Terminated and not getNewRequest) do
         begin
             if (MilliSecondsBetween(timeAtLastRequest, Now) > fRefresh) then
                 break;
