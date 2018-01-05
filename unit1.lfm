@@ -42,13 +42,13 @@ object Form1: TForm1
     Text = 'http://play.grafana.org/api/datasources/proxy/2/query'
   end
   object Memo1: TMemo
-    AnchorSideTop.Control = PaintBox1
+    AnchorSideTop.Control = Chart1
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
     Left = 8
-    Height = 200
-    Top = 501
+    Height = 208
+    Top = 493
     Width = 800
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Top = 5
@@ -56,17 +56,6 @@ object Form1: TForm1
       'Memo1'
     )
     TabOrder = 3
-  end
-  object PaintBox1: TPaintBox
-    AnchorSideRight.Side = asrBottom
-    Left = 8
-    Height = 280
-    Top = 216
-    Width = 800
-    Anchors = [akTop, akLeft, akRight]
-    Color = clGray
-    ParentColor = False
-    OnPaint = PaintBox1Paint
   end
   object Edit2: TEdit
     Left = 112
@@ -153,5 +142,28 @@ object Form1: TForm1
     OnExit = Edit5Exit
     TabOrder = 8
     Text = '0'
+  end
+  object Chart1: TChart
+    Left = 8
+    Height = 296
+    Top = 192
+    Width = 800
+    AxisList = <    
+      item
+        Minors = <>
+        Title.LabelFont.Orientation = 900
+      end    
+      item
+        Alignment = calBottom
+        Minors = <>
+      end>
+    Foot.Brush.Color = clBtnFace
+    Foot.Font.Color = clBlue
+    Title.Brush.Color = clBtnFace
+    Title.Font.Color = clBlue
+    Title.Text.Strings = (
+      'TAChart'
+    )
+    Anchors = [akTop, akLeft, akRight, akBottom]
   end
 end

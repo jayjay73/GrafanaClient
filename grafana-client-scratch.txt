@@ -111,3 +111,56 @@ http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT%20%22valu
             fAnswer := HttpClient.Get(fUrl + '?' + fRequest.DelimitedText);
 
 .
+
+http://play.grafana.org/api/datasources/proxy/2/query?db=site&q=SELECT "value" FROM "logins.count" WHERE time >= now() - 15m GROUP BY "hostname", "datacenter", "source";SELECT "value" FROM "cpu" WHERE time >= now() - 15m GROUP BY "datacenter", "hostname", "source"&epoch=ms
+
+http://play.grafana.org/api/datasources/proxy/2/query?
+db=site&
+q=SELECT "value" FROM "logins.count" WHERE time >= now() - 15m GROUP BY "hostname", "datacenter", "source";
+SELECT "value" FROM "cpu" WHERE time >= now() - 15m GROUP BY "datacenter", "hostname", "source"&
+epoch=ms
+
+SELECT "value" FROM "logins.count" WHERE time >= now() - 15m GROUP BY "hostname", "datacenter", "source";SELECT "value" FROM "cpu" WHERE time >= now() - 15m GROUP BY "datacenter", "hostname", "source"
+
+procedure TForm1.PaintBox1Paint(Sender: TObject);
+var
+    n, w, h: integer;
+    yoffset: double;
+begin
+    PaintBox1.Canvas.Clear;
+    if (numDatapoints > 0) then
+    begin
+        w := PaintBox1.ClientWidth;
+        h := PaintBox1.ClientHeight;
+        xstep := w / numDatapoints;
+        yscale := h / (maxv - minv);
+        yoffset := 0 - minv;
+
+        Memo1.Lines.Add('w: ' + w.ToString + ' h: ' + h.ToString);
+        Memo1.Lines.Add('xstep: ' + xstep.ToString);
+        Memo1.Lines.Add('yscale: ' + yscale.ToString);
+        Memo1.Lines.Add('yoffset: ' + yoffset.ToString);
+
+        PaintBox1.Canvas.MoveTo(0, h - Round(yoffset * yscale));
+        PaintBox1.Canvas.LineTo(w, h - Round(yoffset * yscale));
+
+        for i := 0 to numDatapoints do
+        begin // paint lines between datapoints
+            x := Round(i * xstep);
+            y := Round((dArray[i] + yoffset) * yscale);
+            if (i = 0) then
+            begin
+                PaintBox1.Canvas.MoveTo(x, h - y);
+            end
+            else
+            begin
+                PaintBox1.Canvas.LineTo(x, h - y);
+                //Memo1.Lines.Add('i: ' + i.ToString + '  x: ' + x.ToString + '  y: ' + y.ToString);
+            end;
+        end;
+    end;
+end;
+
+
+SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 5m GROUP BY  "hostname"
+

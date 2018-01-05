@@ -6,14 +6,23 @@ unit Unit1;
 interface
 
 uses
-    Math, Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-    ExtCtrls, Menus, fpjson, jsonparser, gcHTTPClientThread;
+    Math, Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics,
+    Dialogs, StdCtrls, ExtCtrls, Menus, fpjson, jsonparser, gcHTTPClientThread,
+    TASeries, TASources, TACustomSource, DateUtils;
 
 
 { TForm1 }
 
 type
+
+    TInfluxDBSource = class(TUserDefinedChartSource)
+    public
+        res, series: integer;
+        timecol, valuecol: Integer;
+    end;
+
     TForm1 = class(TForm)
+        Chart1: TChart;
         Edit5: TEdit;
         Label5: TLabel;
         StopButton: TButton;
@@ -28,26 +37,29 @@ type
         Memo1: TMemo;
         OKButton: TButton;
         CancelButton: TButton;
-        PaintBox1: TPaintBox;
         procedure CopyRequest(var request: string; var autorefresh: integer);
         procedure CopyResponse(response: string);
         procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure OKButtonClick(Sender: TObject);
         procedure CancelButtonClick(Sender: TObject);
-        procedure PaintBox1Paint(Sender: TObject);
+        //procedure PaintBox1Paint(Sender: TObject);
         procedure StopButtonClick(Sender: TObject);
         procedure WebGetThreadTerminates(Sender: TObject);
+        procedure GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
 
     private
         { private declarations }
+        ArChart1Series: array of TLineSeries;
+        ArChart1Sources: array of TInfluxDBSource;
+
     public
         { public declarations }
     end;
 
 var
     Form1: TForm1;
-    S, needle, s2, s3, dtime, timecolumn, valuename: string;
+    S, needle, s2, s3, dtime: string;
     jData, jd2, jd3: TJSONData;
     jObject, jo2, jo3: TJSONObject;
     jArray, ja2, ja3: TJSONArray;
@@ -88,6 +100,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
     Memo1.ScrollBars := ssVertical;
     DoubleBuffered := True;
+    Chart1.DoubleBuffered:= True;
 end;
 
 procedure TForm1.CopyRequest(var request: string; var autorefresh: integer);
@@ -104,28 +117,16 @@ begin
 end;
 
 procedure TForm1.CopyResponse(response: string);
+var
+    iRes, iSer, numResults, numSeries, numPoints: integer;
+    eJson: TJSONEnum;
+    timecol, valuecol: integer;
+    valuename: string;
+
 begin
     // pass data to main thread
     jData := GetJSON(response);
     //Memo1.Lines.Add(jData.FormatJSON());
-    //jd2 := jData.GetPath('results[0].series[0].values');
-
-    //jd3:= jData.GetPath('results[0].series[5].columns');
-    jd3 := jData.GetPath('results[0].series[0].columns');
-    ja3 := TJSONArray(jd3);
-    for je3 in ja3 do
-    begin
-        //Memo1.Lines.Add(je3.Value.AsString);
-        if (je3.Value.AsString = 'time') then
-        begin
-            //Memo1.Lines.Add(je3.Key);
-            timecolumn := je3.Key;
-        end
-        else
-            valuename := je3.Value.AsString;
-    end;
-    Memo1.Lines.Add(timecolumn);
-    Memo1.Lines.Add(valuename);
 
     //jd2 := jData.GetPath('results[0].series[5].values');
     jd2 := jData.GetPath('results[0].series[0].values');
@@ -158,12 +159,80 @@ begin
     //Memo1.Lines.Add(jArray.FormatJSON);
     Memo1.Lines.Add(DateTimeToStr(Now));
 
-    PaintBox1.Invalidate;
+    numResults := jData.GetPath('results').Count;
+    Memo1.Lines.Add('numResults: ' + numResults.toString);
+    i := 0;
+    for iRes := 0 to numResults - 1 do
+    begin
+        numSeries := jData.GetPath('results').Items[iRes].GetPath('series').Count;
+        Memo1.Lines.Add('numSeries: ' + numSeries.toString);
+        for iSer := 0 to numSeries - 1 do
+        begin
+            numPoints := jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('values').Count;
+            Memo1.Lines.Add('iRes: ' + iRes.ToString + 'iSer: ' + iSer.toString);
+            Memo1.Lines.Add('i: ' + i.ToString);
+            Memo1.Lines.Add('Points: ' + numPoints.toString);
+
+            for eJson in TJSONArray(jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('columns')) do
+            begin
+                if (eJson.Value.AsString = 'time') then
+                begin
+                    timecol := StrToInt(eJson.Key);
+                end
+                else
+                begin
+                    valuecol:= StrToInt(eJson.Key);
+                    valuename := eJson.Value.AsString;
+                end;
+            end;
+            Memo1.Lines.Add('Time column: ' + timecol.toString);
+            Memo1.Lines.Add('Value column: ' + valuecol.toString);
+            Memo1.Lines.Add('Value name: ' + valuename);
+
+
+            SetLength(ArChart1Sources, i + 1);
+            ArChart1Sources[i] := TInfluxDBSource.Create(Chart1);
+            ArChart1Sources[i].res := iRes;
+            ArChart1Sources[i].series := iSer;
+            ArChart1Sources[i].timecol:= timecol;
+            ArChart1Sources[i].valuecol:= valuecol;
+            ArChart1Sources[i].PointsNumber := numPoints;
+            ArChart1Sources[i].OnGetChartDataItem := TGetChartDataItemEvent(@GetJSONPoint);
+
+            SetLength(ArChart1Series, i + 1);
+            ArChart1Series[i] := TLineSeries.Create(Chart1);
+            ArChart1Series[i].Source:= ArChart1Sources[i];
+            Chart1.AddSeries(ArChart1Series[i]);
+
+            //TLineSeries.
+            //ChartSource.OnGetChartDataItem:=;
+            //TgetChartDataItemEvent.
+            //TUserDefinedChartSource.Tag:=;
+            i := i + 1;
+        end;
+    end;
+
+    //PaintBox1.Invalidate;
+end;
+
+procedure TForm1.GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
+begin
+    //AItem.X:= AIndex;
+    //AItem.Y:= random(25);
+    //Memo1.Lines.Add('res: ' + ASource.res.toString);
+    //Memo1.Lines.Add('series: ' + ASource.series.toString);
+
+    AItem.X:= UnixToDateTime(jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
+    AItem.Y:= jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
+
+    //Memo1.Lines.Add(jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].FormatJSON);
+    //Memo1.Lines.Add(ASource.timecol.toString);
+    //Memo1.Lines.Add(ASource.valuecol.toString);
 end;
 
 procedure TForm1.WebGetThreadTerminates(Sender: TObject);
 begin
-    StopButton.Enabled:= false;
+    StopButton.Enabled := False;
 end;
 
 procedure TForm1.OKButtonClick(Sender: TObject);
@@ -172,7 +241,8 @@ begin
     WebGetThread.OnSyncRequestParams := @CopyRequest;
     WebGetThread.OnSynchResponseData := @CopyResponse;
     WebGetThread.OnTerminate := @WebGetThreadTerminates;
-    StopButton.Enabled:= true;
+    StopButton.Enabled := True;
+
 end;
 
 procedure TForm1.Edit5Exit(Sender: TObject);
@@ -183,52 +253,15 @@ end;
 procedure TForm1.CancelButtonClick(Sender: TObject);
 begin
     Memo1.Clear;
-    PaintBox1.Invalidate;
-    PaintBox1.Canvas.Clear;
+    //PaintBox1.Invalidate;
+    //PaintBox1.Canvas.Clear;
+
     //Memo1.Lines.Add(PaintBox1.Canvas.Width.ToString);
     //Memo1.Lines.Add(PaintBox1.Canvas.Height.ToString);
     //Memo1.Lines.Add(PaintBox1.ClientWidth.ToString);
     //Memo1.Lines.Add(PaintBox1.ClientHeight.ToString);
 end;
 
-procedure TForm1.PaintBox1Paint(Sender: TObject);
-var
-    n, w, h: integer;
-    yoffset: double;
-begin
-    PaintBox1.Canvas.Clear;
-    if (numDatapoints > 0) then
-    begin
-        w := PaintBox1.ClientWidth;
-        h := PaintBox1.ClientHeight;
-        xstep := w / numDatapoints;
-        yscale := h / (maxv - minv);
-        yoffset := 0 - minv;
-
-        Memo1.Lines.Add('w: ' + w.ToString + ' h: ' + h.ToString);
-        Memo1.Lines.Add('xstep: ' + xstep.ToString);
-        Memo1.Lines.Add('yscale: ' + yscale.ToString);
-        Memo1.Lines.Add('yoffset: ' + yoffset.ToString);
-
-        PaintBox1.Canvas.MoveTo(0, h - Round(yoffset * yscale));
-        PaintBox1.Canvas.LineTo(w, h - Round(yoffset * yscale));
-
-        for i := 0 to numDatapoints do
-        begin // paint lines between datapoints
-            x := Round(i * xstep);
-            y := Round((dArray[i] + yoffset) * yscale);
-            if (i = 0) then
-            begin
-                PaintBox1.Canvas.MoveTo(x, h - y);
-            end
-            else
-            begin
-                PaintBox1.Canvas.LineTo(x, h - y);
-                //Memo1.Lines.Add('i: ' + i.ToString + '  x: ' + x.ToString + '  y: ' + y.ToString);
-            end;
-        end;
-    end;
-end;
 
 procedure TForm1.StopButtonClick(Sender: TObject);
 begin

@@ -8,7 +8,7 @@ uses
     cthreads,
     {$ENDIF} {$ENDIF}
     Interfaces,
-    Forms,
+    Forms, tachartlazaruspkg,
     Unit1;
 
 {$R *.res}
