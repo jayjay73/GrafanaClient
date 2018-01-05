@@ -18,7 +18,7 @@ type
     TInfluxDBSource = class(TUserDefinedChartSource)
     public
         res, series: integer;
-        timecol, valuecol: Integer;
+        timecol, valuecol: integer;
     end;
 
     TForm1 = class(TForm)
@@ -100,7 +100,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
     Memo1.ScrollBars := ssVertical;
     DoubleBuffered := True;
-    Chart1.DoubleBuffered:= True;
+    Chart1.DoubleBuffered := True;
 end;
 
 procedure TForm1.CopyRequest(var request: string; var autorefresh: integer);
@@ -125,40 +125,9 @@ var
 
 begin
     // pass data to main thread
+    Memo1.Lines.Add(DateTimeToStr(Now));
+
     jData := GetJSON(response);
-    //Memo1.Lines.Add(jData.FormatJSON());
-
-    //jd2 := jData.GetPath('results[0].series[5].values');
-    jd2 := jData.GetPath('results[0].series[0].values');
-    jArray := TJSONArray(jd2);
-
-    Memo1.Lines.Add(DateTimeToStr(Now));
-    lastDValue := 0;
-    i := 0;
-    for jElem in jArray do
-    begin
-        dtime := jElem.Value.GetPath('[0]').AsString;
-        if (jElem.Value.GetPath('[1]').IsNull) then
-            dvalue := lastDValue
-        else
-        begin
-            dvalue := jElem.Value.GetPath('[1]').AsFloat;
-            lastDValue := dvalue;
-        end;
-        SetLength(dArray, i + 1);
-        dArray[i] := dvalue;
-        maxv := MaxValue(dArray);
-        minv := MinValue(dArray);
-        //Memo1.Lines.Add(i.toString + ': ' + dvalue.ToString);
-        i := i + 1;
-    end;
-    numDatapoints := i - 1;
-    Memo1.Lines.Add('Datapoints: ' + numDatapoints.ToString);
-    Memo1.Lines.Add('min value: ' + minv.ToString);
-    Memo1.Lines.Add('max value: ' + maxv.ToString);
-    //Memo1.Lines.Add(jArray.FormatJSON);
-    Memo1.Lines.Add(DateTimeToStr(Now));
-
     numResults := jData.GetPath('results').Count;
     Memo1.Lines.Add('numResults: ' + numResults.toString);
     i := 0;
@@ -181,53 +150,37 @@ begin
                 end
                 else
                 begin
-                    valuecol:= StrToInt(eJson.Key);
+                    valuecol := StrToInt(eJson.Key);
                     valuename := eJson.Value.AsString;
                 end;
             end;
+
             Memo1.Lines.Add('Time column: ' + timecol.toString);
             Memo1.Lines.Add('Value column: ' + valuecol.toString);
             Memo1.Lines.Add('Value name: ' + valuename);
-
 
             SetLength(ArChart1Sources, i + 1);
             ArChart1Sources[i] := TInfluxDBSource.Create(Chart1);
             ArChart1Sources[i].res := iRes;
             ArChart1Sources[i].series := iSer;
-            ArChart1Sources[i].timecol:= timecol;
-            ArChart1Sources[i].valuecol:= valuecol;
+            ArChart1Sources[i].timecol := timecol;
+            ArChart1Sources[i].valuecol := valuecol;
             ArChart1Sources[i].PointsNumber := numPoints;
             ArChart1Sources[i].OnGetChartDataItem := TGetChartDataItemEvent(@GetJSONPoint);
 
             SetLength(ArChart1Series, i + 1);
             ArChart1Series[i] := TLineSeries.Create(Chart1);
-            ArChart1Series[i].Source:= ArChart1Sources[i];
+            ArChart1Series[i].Source := ArChart1Sources[i];
             Chart1.AddSeries(ArChart1Series[i]);
-
-            //TLineSeries.
-            //ChartSource.OnGetChartDataItem:=;
-            //TgetChartDataItemEvent.
-            //TUserDefinedChartSource.Tag:=;
             i := i + 1;
         end;
     end;
-
-    //PaintBox1.Invalidate;
 end;
 
 procedure TForm1.GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
 begin
-    //AItem.X:= AIndex;
-    //AItem.Y:= random(25);
-    //Memo1.Lines.Add('res: ' + ASource.res.toString);
-    //Memo1.Lines.Add('series: ' + ASource.series.toString);
-
-    AItem.X:= UnixToDateTime(jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
-    AItem.Y:= jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
-
-    //Memo1.Lines.Add(jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].FormatJSON);
-    //Memo1.Lines.Add(ASource.timecol.toString);
-    //Memo1.Lines.Add(ASource.valuecol.toString);
+    AItem.X := UnixToDateTime(jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
+    AItem.Y := jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
 end;
 
 procedure TForm1.WebGetThreadTerminates(Sender: TObject);
@@ -242,7 +195,6 @@ begin
     WebGetThread.OnSynchResponseData := @CopyResponse;
     WebGetThread.OnTerminate := @WebGetThreadTerminates;
     StopButton.Enabled := True;
-
 end;
 
 procedure TForm1.Edit5Exit(Sender: TObject);
@@ -253,13 +205,6 @@ end;
 procedure TForm1.CancelButtonClick(Sender: TObject);
 begin
     Memo1.Clear;
-    //PaintBox1.Invalidate;
-    //PaintBox1.Canvas.Clear;
-
-    //Memo1.Lines.Add(PaintBox1.Canvas.Width.ToString);
-    //Memo1.Lines.Add(PaintBox1.Canvas.Height.ToString);
-    //Memo1.Lines.Add(PaintBox1.ClientWidth.ToString);
-    //Memo1.Lines.Add(PaintBox1.ClientHeight.ToString);
 end;
 
 
