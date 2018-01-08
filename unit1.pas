@@ -17,7 +17,7 @@ type
 
     TInfluxDBSource = class(TUserDefinedChartSource)
     public
-        res, series: integer;
+        reslt, series: integer;
         timecol, valuecol: integer;
     end;
 
@@ -130,6 +130,7 @@ begin
     jData := GetJSON(response);
     numResults := jData.GetPath('results').Count;
     Memo1.Lines.Add('numResults: ' + numResults.toString);
+    Chart1.Series.Clear;
     i := 0;
     for iRes := 0 to numResults - 1 do
     begin
@@ -160,8 +161,9 @@ begin
             Memo1.Lines.Add('Value name: ' + valuename);
 
             SetLength(ArChart1Sources, i + 1);
-            ArChart1Sources[i] := TInfluxDBSource.Create(Chart1);
-            ArChart1Sources[i].res := iRes;
+            //if not Assigned(ArChart1Sources[i]) then
+               ArChart1Sources[i] := TInfluxDBSource.Create(Chart1);
+            ArChart1Sources[i].reslt := iRes;
             ArChart1Sources[i].series := iSer;
             ArChart1Sources[i].timecol := timecol;
             ArChart1Sources[i].valuecol := valuecol;
@@ -169,18 +171,25 @@ begin
             ArChart1Sources[i].OnGetChartDataItem := TGetChartDataItemEvent(@GetJSONPoint);
 
             SetLength(ArChart1Series, i + 1);
-            ArChart1Series[i] := TLineSeries.Create(Chart1);
+            //if not Assigned(ArChart1Series[i]) then
+               ArChart1Series[i] := TLineSeries.Create(Chart1);
             ArChart1Series[i].Source := ArChart1Sources[i];
             Chart1.AddSeries(ArChart1Series[i]);
             i := i + 1;
         end;
     end;
+    Chart1.BottomAxis.Intervals.MaxLength:= 100;
+    Chart1.BottomAxis.Intervals.MinLength:= 100;
+    Chart1.BottomAxis.Marks.Format := '%6.8g';
+    //Chart1.m;
+    Chart1.MarginsExternal.right:= 100;
+    Chart1.Margins.right:= 100;
 end;
 
 procedure TForm1.GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
 begin
-    AItem.X := UnixToDateTime(jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
-    AItem.Y := jData.GetPath('results').Items[ASource.res].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
+    AItem.X := UnixToDateTime(jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
+    AItem.Y := jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
 end;
 
 procedure TForm1.WebGetThreadTerminates(Sender: TObject);
