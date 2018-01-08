@@ -80,6 +80,7 @@ begin
     while (not Terminated) do
     begin
         if (getNewRequest) then
+            // next line produces call trace
             Synchronize(@DoSyncRequestParams);
         // make http call
         HttpClient := TFPHttpClient.Create(nil);
