@@ -32,8 +32,8 @@ type
         Memo1: TMemo;
         OKButton: TButton;
         CancelButton: TButton;
-        procedure CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
         PaintBox1: TPaintBox;
+        procedure CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
         procedure CopyResponse(response: string);
         procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);

@@ -5,6 +5,7 @@
 *.res
 *.bak
 *.dbg
+*.trc
 *id_rsa
 /backup
 /lib

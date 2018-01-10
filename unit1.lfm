@@ -10,6 +10,7 @@ object Form1: TForm1
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
   OnCreate = FormCreate
+  LCLVersion = '1.8.0.6'
   Visible = False
   object OKButton: TButton
     Left = 638
@@ -156,34 +157,34 @@ object Form1: TForm1
   end
   object Label6: TLabel
     Left = 312
-    Height = 17
+    Height = 13
     Top = 56
-    Width = 30
+    Width = 26
     Caption = 'User:'
     ParentColor = False
   end
   object Edit6: TEdit
     Left = 352
-    Height = 25
+    Height = 21
     Top = 56
     Width = 112
     TabOrder = 10
   end
   object Label7: TLabel
     Left = 496
-    Height = 17
+    Height = 13
     Top = 56
-    Width = 59
+    Width = 50
     Caption = 'Password:'
     ParentColor = False
   end
   object Edit7: TEdit
     Left = 560
-    Height = 25
+    Height = 21
     Top = 56
     Width = 120
     EchoMode = emPassword
     PasswordChar = '*'
-    TabOrder = 11
+    TabOrder = 9
   end
 end
