@@ -183,11 +183,11 @@ begin
             i := i + 1;
         end;
     end;
-    Chart1.BottomAxis.Intervals.MaxLength := 100;
-    Chart1.BottomAxis.Intervals.MinLength := 100;
-    Chart1.BottomAxis.Marks.Format := '%6.8g';
-    Chart1.MarginsExternal.right := 100;
-    Chart1.Margins.right := 100;
+    //Chart1.BottomAxis.Intervals.MaxLength := 100;
+    //Chart1.BottomAxis.Intervals.MinLength := 100;
+    //Chart1.BottomAxis.Marks.Format := '%6.8g';
+    //Chart1.MarginsExternal.right := 100;
+    //Chart1.Margins.right := 100;
 end;
 
 procedure TForm1.GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);

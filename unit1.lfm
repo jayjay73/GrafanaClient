@@ -9,9 +9,7 @@ object Form1: TForm1
   ClientWidth = 816
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
-  DesignTimePPI = 106
   OnCreate = FormCreate
-  LCLVersion = '1.8.0.6'
   Visible = False
   object OKButton: TButton
     Left = 638
@@ -36,7 +34,7 @@ object Form1: TForm1
   object Edit1: TEdit
     AnchorSideLeft.Side = asrBottom
     Left = 112
-    Height = 25
+    Height = 21
     Top = 24
     Width = 696
     Anchors = [akTop, akLeft, akRight]
@@ -61,7 +59,7 @@ object Form1: TForm1
   end
   object Edit2: TEdit
     Left = 112
-    Height = 25
+    Height = 21
     Top = 56
     Width = 176
     TabOrder = 4
@@ -69,31 +67,31 @@ object Form1: TForm1
   end
   object Label1: TLabel
     Left = 14
-    Height = 17
+    Height = 13
     Top = 24
-    Width = 100
+    Width = 84
     Caption = 'Data source URL:'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 81
-    Height = 17
+    Height = 13
     Top = 56
-    Width = 19
+    Width = 17
     Caption = 'DB:'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 64
-    Height = 17
+    Height = 13
     Top = 88
-    Width = 38
+    Width = 34
     Caption = 'Query:'
     ParentColor = False
   end
   object Edit3: TEdit
     Left = 112
-    Height = 25
+    Height = 21
     Top = 88
     Width = 696
     Anchors = [akTop, akLeft, akRight]
@@ -102,15 +100,15 @@ object Form1: TForm1
   end
   object Label4: TLabel
     Left = 65
-    Height = 17
+    Height = 13
     Top = 120
-    Width = 39
+    Width = 33
     Caption = 'Epoch:'
     ParentColor = False
   end
   object Edit4: TEdit
     Left = 112
-    Height = 25
+    Height = 21
     Top = 120
     Width = 80
     TabOrder = 6
@@ -129,15 +127,15 @@ object Form1: TForm1
   end
   object Label5: TLabel
     Left = 30
-    Height = 17
+    Height = 13
     Top = 152
-    Width = 78
+    Width = 68
     Caption = 'Auto Refresh:'
     ParentColor = False
   end
   object Edit5: TEdit
     Left = 112
-    Height = 25
+    Height = 21
     Top = 152
     Width = 80
     NumbersOnly = True
@@ -152,11 +150,25 @@ object Form1: TForm1
     Width = 800
     AxisList = <    
       item
+        LabelSize = 40
         Minors = <>
         Title.LabelFont.Orientation = 900
       end    
       item
         Alignment = calBottom
+        LabelSize = 20
+        Minors = <>
+      end    
+      item
+        Alignment = calRight
+        LabelSize = 35
+        Marks.Visible = False
+        Minors = <>
+      end    
+      item
+        Alignment = calTop
+        LabelSize = 20
+        Marks.Visible = False
         Minors = <>
       end>
     Foot.Brush.Color = clBtnFace
@@ -170,30 +182,30 @@ object Form1: TForm1
   end
   object Label6: TLabel
     Left = 312
-    Height = 17
+    Height = 13
     Top = 56
-    Width = 30
+    Width = 26
     Caption = 'User:'
     ParentColor = False
   end
   object Edit6: TEdit
     Left = 352
-    Height = 25
+    Height = 21
     Top = 56
     Width = 112
     TabOrder = 10
   end
   object Label7: TLabel
     Left = 496
-    Height = 17
+    Height = 13
     Top = 56
-    Width = 59
+    Width = 50
     Caption = 'Password:'
     ParentColor = False
   end
   object Edit7: TEdit
     Left = 560
-    Height = 25
+    Height = 21
     Top = 56
     Width = 120
     EchoMode = emPassword

@@ -21,7 +21,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="33" Y="190"/>
+        <TopLine Value="148"/>
+        <CursorPos Y="167"/>
         <UsageCount Value="208"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -31,7 +32,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="gcHTTPClientThread"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="38"/>
+        <TopLine Value="43"/>
         <CursorPos X="42" Y="91"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
