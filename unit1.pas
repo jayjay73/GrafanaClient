@@ -15,7 +15,11 @@ uses
 type
     TForm1 = class(TForm)
         Edit5: TEdit;
+        Edit6: TEdit;
+        Edit7: TEdit;
         Label5: TLabel;
+        Label6: TLabel;
+        Label7: TLabel;
         StopButton: TButton;
         Edit1: TEdit;
         Edit2: TEdit;
@@ -28,8 +32,8 @@ type
         Memo1: TMemo;
         OKButton: TButton;
         CancelButton: TButton;
+        procedure CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
         PaintBox1: TPaintBox;
-        procedure CopyRequest(var request: string; var autorefresh: integer);
         procedure CopyResponse(response: string);
         procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);
@@ -90,7 +94,7 @@ begin
     DoubleBuffered := True;
 end;
 
-procedure TForm1.CopyRequest(var request: string; var autorefresh: integer);
+procedure TForm1.CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
 begin
     // get request params from main thread
     R := TStringList.Create;
@@ -100,6 +104,8 @@ begin
     R.values['epoch'] := Edit4.Text;
     Memo1.Lines.Add(R.DelimitedText);
     request := Edit1.Text + '?' + R.DelimitedText;
+    user := Edit6.Text;
+    pass := Edit7.Text;
     autorefresh := dataRefresh * 1000;
 end;
 
