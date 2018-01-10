@@ -24,7 +24,11 @@ type
     TForm1 = class(TForm)
         Chart1: TChart;
         Edit5: TEdit;
+        Edit6: TEdit;
+        Edit7: TEdit;
         Label5: TLabel;
+        Label6: TLabel;
+        Label7: TLabel;
         StopButton: TButton;
         Edit1: TEdit;
         Edit2: TEdit;
@@ -37,13 +41,12 @@ type
         Memo1: TMemo;
         OKButton: TButton;
         CancelButton: TButton;
-        procedure CopyRequest(var request: string; var autorefresh: integer);
+        procedure CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
         procedure CopyResponse(response: string);
         procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure OKButtonClick(Sender: TObject);
         procedure CancelButtonClick(Sender: TObject);
-        //procedure PaintBox1Paint(Sender: TObject);
         procedure StopButtonClick(Sender: TObject);
         procedure WebGetThreadTerminates(Sender: TObject);
         procedure GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
@@ -103,7 +106,7 @@ begin
     Chart1.DoubleBuffered := True;
 end;
 
-procedure TForm1.CopyRequest(var request: string; var autorefresh: integer);
+procedure TForm1.CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
 begin
     // get request params from main thread
     R := TStringList.Create;
@@ -113,6 +116,8 @@ begin
     R.values['epoch'] := Edit4.Text;
     Memo1.Lines.Add(R.DelimitedText);
     request := Edit1.Text + '?' + R.DelimitedText;
+    user := Edit6.Text;
+    pass := Edit7.Text;
     autorefresh := dataRefresh * 1000;
 end;
 
@@ -162,7 +167,7 @@ begin
 
             SetLength(ArChart1Sources, i + 1);
             //if not Assigned(ArChart1Sources[i]) then
-               ArChart1Sources[i] := TInfluxDBSource.Create(Chart1);
+            ArChart1Sources[i] := TInfluxDBSource.Create(Chart1);
             ArChart1Sources[i].reslt := iRes;
             ArChart1Sources[i].series := iSer;
             ArChart1Sources[i].timecol := timecol;
@@ -172,18 +177,17 @@ begin
 
             SetLength(ArChart1Series, i + 1);
             //if not Assigned(ArChart1Series[i]) then
-               ArChart1Series[i] := TLineSeries.Create(Chart1);
+            ArChart1Series[i] := TLineSeries.Create(Chart1);
             ArChart1Series[i].Source := ArChart1Sources[i];
             Chart1.AddSeries(ArChart1Series[i]);
             i := i + 1;
         end;
     end;
-    Chart1.BottomAxis.Intervals.MaxLength:= 100;
-    Chart1.BottomAxis.Intervals.MinLength:= 100;
+    Chart1.BottomAxis.Intervals.MaxLength := 100;
+    Chart1.BottomAxis.Intervals.MinLength := 100;
     Chart1.BottomAxis.Marks.Format := '%6.8g';
-    //Chart1.m;
-    Chart1.MarginsExternal.right:= 100;
-    Chart1.Margins.right:= 100;
+    Chart1.MarginsExternal.right := 100;
+    Chart1.Margins.right := 100;
 end;
 
 procedure TForm1.GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);

@@ -8,7 +8,7 @@ uses
     Classes, SysUtils, fphttpclient, HTTPDefs, DateUtils;
 
 type
-    TSyncRequestParamsEvent = procedure(var request: string; var refresh: integer) of object;
+    TSyncRequestParamsEvent = procedure(var request: string; var refresh: integer; var user, pass: string) of object;
     TSyncResponseDataEvent = procedure(response: string) of object;
 
     TWebGetThread = class(TThread)
@@ -16,6 +16,7 @@ type
         fRequest: string;
         fRefresh: integer;
         fAnswer: string;
+        fUser, fPass: string;
         getNewRequest: boolean;
         HTTPClient: TFPHttpClient;
         FSynchRequestParams: TSyncRequestParamsEvent;
@@ -62,7 +63,7 @@ end;
 procedure TWebGetThread.DoSyncRequestParams;
 begin
     if Assigned(FSynchRequestParams) then
-        FSynchRequestParams(fRequest, fRefresh);
+        FSynchRequestParams(fRequest, fRefresh, fUser, fPass);
     getNewRequest := False;
 end;
 
@@ -86,9 +87,12 @@ begin
         HttpClient := TFPHttpClient.Create(nil);
         try
             HttpClient.AllowRedirect := True;
+            HttpClient.UserName := fUser;
+            HttpClient.Password := fPass;
             HttpClient.AddHeader('Content-Type', 'application/json');
             HttpClient.AddHeader('Accept', 'application/json');
             fAnswer := HttpClient.Get(fRequest);
+
         finally
             HttpClient.Free;
         end;

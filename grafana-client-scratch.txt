@@ -164,3 +164,14 @@ end;
 
 SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 5m GROUP BY  "hostname"
 
+
+https://grafana-prax.dfd-hamburg.de/api/datasources/proxy/6/query?
+db=telegraf&
+q=SELECT mean(load1) as load1,mean(load5) as load5,mean(load15) as load15 FROM "system" WHERE host =~ /grafplog01.dfd-hamburg.de$/ AND time >= now() - 15m GROUP BY time(1s), * ORDER BY asc&
+epoch=ms
+
+https://grafana-prax.dfd-hamburg.de/api/datasources/proxy/6/query?
+db=telegraf&
+q=SELECT mean("BusyWorkers") FROM "apache" WHERE ("host" =~ /^(fidipmid01\.dfd-hamburg\.de|fidipmid31\.dfd-hamburg\.de)$/ AND "port" <> '44000') AND time >= now() - 1h GROUP BY time(30s), "tag1" fill(null)&
+epoch=ms
+
