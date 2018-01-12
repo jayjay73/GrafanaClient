@@ -6,9 +6,10 @@ unit Unit1;
 interface
 
 uses
-    Math, Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics,
+    //Math,
+    Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics,
     Dialogs, StdCtrls, ExtCtrls, Menus, fpjson, jsonparser, gcHTTPClientThread,
-    TASeries, TASources, TACustomSource, DateUtils;
+    TASeries, TASources, TACustomSource, DateUtils, fgl;
 
 
 { TForm1 }
@@ -20,6 +21,17 @@ type
         reslt, series: integer;
         timecol, valuecol: integer;
     end;
+
+    gcTTagsList = specialize TFPGMap<String, String>;
+
+    gcTSeries = record
+      name: string;
+      tags: gcTTagsList;
+      time: array of TDateTime;
+      value: array of double;
+    end;
+
+    gcTResultData = array of array of gcTSeries;
 
     TForm1 = class(TForm)
         Chart1: TChart;
@@ -75,6 +87,8 @@ var
     dataRefresh: integer;
     R: TStrings;
 
+    resultData: gcTResultData;
+
 
 implementation
 
@@ -123,7 +137,7 @@ end;
 
 procedure TForm1.CopyResponse(response: string);
 var
-    iRes, iSer, numResults, numSeries, numPoints: integer;
+    iRes, iSer, iPoint, numResults, numSeries, numPoints: integer;
     eJson: TJSONEnum;
     timecol, valuecol: integer;
     valuename: string;
@@ -135,12 +149,20 @@ begin
     jData := GetJSON(response);
     numResults := jData.GetPath('results').Count;
     Memo1.Lines.Add('numResults: ' + numResults.toString);
+
     Chart1.Series.Clear;
-    i := 0;
+    setLength(resultData, numResults);
+
+    // iterate over "results" (eq. number of queries in the request)
+    i := 0; // chart index: every series in every result gets a graph
     for iRes := 0 to numResults - 1 do
     begin
         numSeries := jData.GetPath('results').Items[iRes].GetPath('series').Count;
         Memo1.Lines.Add('numSeries: ' + numSeries.toString);
+
+        SetLength(resultData[iRes], numSeries);
+
+        // iterate over "series"
         for iSer := 0 to numSeries - 1 do
         begin
             numPoints := jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('values').Count;
@@ -148,6 +170,10 @@ begin
             Memo1.Lines.Add('i: ' + i.ToString);
             Memo1.Lines.Add('Points: ' + numPoints.toString);
 
+            SetLength(resultData[iRes][iSer].time, numPoints);
+            SetLength(resultData[iRes][iSer].value, numPoints);
+
+            // iterate over "columns" and find out which is time (X-axis) and which is value (Y-axis)
             for eJson in TJSONArray(jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('columns')) do
             begin
                 if (eJson.Value.AsString = 'time') then
@@ -164,6 +190,21 @@ begin
             Memo1.Lines.Add('Time column: ' + timecol.toString);
             Memo1.Lines.Add('Value column: ' + valuecol.toString);
             Memo1.Lines.Add('Value name: ' + valuename);
+
+            // iterate over "values"; each value is a logical point in the graph
+            iPoint:= 0;
+            for eJson in TJSONArray(jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('values')) do
+            begin
+                resultData[iRes][iSer].time[iPoint] := UnixToDateTime(eJson.Value.Items[timecol].AsInteger);
+                resultData[iRes][iSer].value[iPoint] := eJson.Value.Items[valuecol].AsFloat;
+                //Memo1.Lines.Add('point: ' + iPoint.ToString);
+                //Memo1.Lines.Add('time: ' + FloatToStr(eJson.Value.Items[timecol].asFloat));
+                //Memo1.Lines.Add('time: ' + FloatToStr(resultData[iRes][iSer].time[iPoint]));
+
+                //Memo1.Lines.Add('data: ' + FloatToStr(eJson.Value.Items[valuecol].asFloat));
+                //Memo1.Lines.Add('data: ' + FloatToStr(resultData[iRes][iSer].value[iPoint]));
+                iPoint:= iPoint + 1;
+            end;
 
             SetLength(ArChart1Sources, i + 1);
             //if not Assigned(ArChart1Sources[i]) then
@@ -192,9 +233,11 @@ end;
 
 procedure TForm1.GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
 begin
-    AItem.X := UnixToDateTime(jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
+    //AItem.X := UnixToDateTime(jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
+    AItem.X := resultData[ASource.reslt][ASource.series].time[AIndex];
     // next line produces call trace
-    AItem.Y := jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
+    //AItem.Y := jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
+    AItem.Y := resultData[ASource.reslt][ASource.series].value[AIndex]
 end;
 
 procedure TForm1.WebGetThreadTerminates(Sender: TObject);

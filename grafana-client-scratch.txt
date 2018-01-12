@@ -175,3 +175,6 @@ db=telegraf&
 q=SELECT mean("BusyWorkers") FROM "apache" WHERE ("host" =~ /^(fidipmid01\.dfd-hamburg\.de|fidipmid31\.dfd-hamburg\.de)$/ AND "port" <> '44000') AND time >= now() - 1h GROUP BY time(30s), "tag1" fill(null)&
 epoch=ms
 
+Memo1.Lines.Add('time: ' + FloatToStr(eJson.Value.Items[valuecol].asFloat));
+Memo1.Lines.Add('time: ' + FloatToStr(resultData[iRes][iSer].value[iPoint]));
+
