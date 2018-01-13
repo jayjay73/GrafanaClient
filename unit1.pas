@@ -9,7 +9,8 @@ uses
     //Math,
     Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics,
     Dialogs, StdCtrls, ExtCtrls, Menus, fpjson, jsonparser, gcHTTPClientThread,
-    TASeries, TASources, TACustomSource, DateUtils, fgl, TAIntervalSources, TAChartUtils;
+    TASeries, TASources, TACustomSource, DateUtils, fgl, TAIntervalSources, TAChartUtils,
+    Unit2;
 
 
 { TForm1 }
@@ -36,20 +37,11 @@ type
     TForm1 = class(TForm)
         Chart1: TChart;
         Edit5: TEdit;
-        Edit6: TEdit;
-        Edit7: TEdit;
         Label5: TLabel;
-        Label6: TLabel;
-        Label7: TLabel;
+        MainMenu1: TMainMenu;
+        MenuItem1: TMenuItem;
+        MenuItem2: TMenuItem;
         StopButton: TButton;
-        Edit1: TEdit;
-        Edit2: TEdit;
-        Edit3: TEdit;
-        Edit4: TEdit;
-        Label1: TLabel;
-        Label2: TLabel;
-        Label3: TLabel;
-        Label4: TLabel;
         Memo1: TMemo;
         OKButton: TButton;
         CancelButton: TButton;
@@ -57,6 +49,7 @@ type
         procedure CopyResponse(response: string);
         procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);
+        procedure MenuItem2Click(Sender: TObject);
         procedure OKButtonClick(Sender: TObject);
         procedure CancelButtonClick(Sender: TObject);
         procedure StopButtonClick(Sender: TObject);
@@ -125,18 +118,23 @@ begin
     //TSeriesMArksStyle.
 end;
 
+procedure TForm1.MenuItem2Click(Sender: TObject);
+begin
+    Form2.ShowModal;
+end;
+
 procedure TForm1.CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
 begin
     // get request params from main thread
     R := TStringList.Create;
     R.Delimiter := '&';
-    R.values['db'] := Edit2.Text;
-    R.values['q'] := URLEncode(Edit3.Text);
-    R.values['epoch'] := Edit4.Text;
+    R.values['db'] := Form2.Edit2.Text;
+    R.values['q'] := URLEncode(Form2.Edit3.Text);
+    R.values['epoch'] := Form2.Edit4.Text;
     Memo1.Lines.Add(R.DelimitedText);
-    request := Edit1.Text + '?' + R.DelimitedText;
-    user := Edit6.Text;
-    pass := Edit7.Text;
+    request := Form2.Edit1.Text + '?' + R.DelimitedText;
+    user := Form2.Edit6.Text;
+    pass := Form2.Edit7.Text;
     autorefresh := dataRefresh * 1000;
 end;
 

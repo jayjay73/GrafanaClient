@@ -10,7 +10,7 @@ uses
     Interfaces,
     Forms, tachartlazaruspkg,
     Unit1,
-    sysutils, LazLogger;
+    sysutils, LazLogger, Unit2;
 
 {$R *.res}
 
@@ -27,6 +27,7 @@ begin
     RequireDerivedFormResource := True;
     Application.Initialize;
     Application.CreateForm(TForm1, Form1);
+    Application.CreateForm(TForm2, Form2);
     Application.Run;
 end.
 

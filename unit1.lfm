@@ -4,17 +4,18 @@ object Form1: TForm1
   Top = 347
   Width = 816
   ActiveControl = OKButton
-  Caption = 'Form1'
+  Caption = 'GrafanaClient'
   ClientHeight = 755
   ClientWidth = 816
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
+  Menu = MainMenu1
   OnCreate = FormCreate
   Visible = False
   object OKButton: TButton
-    Left = 638
+    Left = 632
     Height = 24
-    Top = 148
+    Top = 0
     Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Go!'
@@ -31,16 +32,6 @@ object Form1: TForm1
     OnClick = CancelButtonClick
     TabOrder = 1
   end
-  object Edit1: TEdit
-    AnchorSideLeft.Side = asrBottom
-    Left = 112
-    Height = 21
-    Top = 24
-    Width = 696
-    Anchors = [akTop, akLeft, akRight]
-    TabOrder = 2
-    Text = 'http://play.grafana.org/api/datasources/proxy/2/query'
-  end
   object Memo1: TMemo
     AnchorSideTop.Control = Chart1
     AnchorSideTop.Side = asrBottom
@@ -55,98 +46,43 @@ object Form1: TForm1
     Lines.Strings = (
       'Memo1'
     )
-    TabOrder = 3
-  end
-  object Edit2: TEdit
-    Left = 112
-    Height = 21
-    Top = 56
-    Width = 176
-    TabOrder = 4
-    Text = 'site'
-  end
-  object Label1: TLabel
-    Left = 14
-    Height = 13
-    Top = 24
-    Width = 84
-    Caption = 'Data source URL:'
-    ParentColor = False
-  end
-  object Label2: TLabel
-    Left = 81
-    Height = 13
-    Top = 56
-    Width = 17
-    Caption = 'DB:'
-    ParentColor = False
-  end
-  object Label3: TLabel
-    Left = 64
-    Height = 13
-    Top = 88
-    Width = 34
-    Caption = 'Query:'
-    ParentColor = False
-  end
-  object Edit3: TEdit
-    Left = 112
-    Height = 21
-    Top = 88
-    Width = 696
-    Anchors = [akTop, akLeft, akRight]
-    TabOrder = 5
-    Text = 'SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND time >= now() - 1h GROUP BY  "hostname"'
-  end
-  object Label4: TLabel
-    Left = 65
-    Height = 13
-    Top = 120
-    Width = 33
-    Caption = 'Epoch:'
-    ParentColor = False
-  end
-  object Edit4: TEdit
-    Left = 112
-    Height = 21
-    Top = 120
-    Width = 80
-    TabOrder = 6
-    Text = 's'
+    TabOrder = 2
   end
   object StopButton: TButton
-    Left = 733
+    Left = 727
     Height = 25
-    Top = 148
+    Top = 0
     Width = 75
     Anchors = [akTop, akRight]
     Caption = 'Stop'
     Enabled = False
     OnClick = StopButtonClick
-    TabOrder = 7
+    TabOrder = 3
   end
   object Label5: TLabel
-    Left = 30
+    Left = 488
     Height = 13
-    Top = 152
+    Top = 3
     Width = 68
+    Anchors = [akTop, akRight]
     Caption = 'Auto Refresh:'
     ParentColor = False
   end
   object Edit5: TEdit
-    Left = 112
+    Left = 568
     Height = 21
-    Top = 152
-    Width = 80
+    Top = 3
+    Width = 43
+    Anchors = [akTop, akRight]
     NumbersOnly = True
     OnExit = Edit5Exit
-    TabOrder = 8
+    TabOrder = 4
     Text = '0'
   end
   object Chart1: TChart
     Left = 8
-    Height = 296
-    Top = 192
+    Height = 456
+    Top = 32
     Width = 800
     AxisList = <    
       item
@@ -186,36 +122,14 @@ object Form1: TForm1
     Anchors = [akTop, akLeft, akRight, akBottom]
     Color = clGrayText
   end
-  object Label6: TLabel
-    Left = 312
-    Height = 13
-    Top = 56
-    Width = 26
-    Caption = 'User:'
-    ParentColor = False
-  end
-  object Edit6: TEdit
-    Left = 352
-    Height = 21
-    Top = 56
-    Width = 112
-    TabOrder = 10
-  end
-  object Label7: TLabel
-    Left = 496
-    Height = 13
-    Top = 56
-    Width = 50
-    Caption = 'Password:'
-    ParentColor = False
-  end
-  object Edit7: TEdit
-    Left = 560
-    Height = 21
-    Top = 56
-    Width = 120
-    EchoMode = emPassword
-    PasswordChar = '*'
-    TabOrder = 11
+  object MainMenu1: TMainMenu
+    left = 88
+    object MenuItem1: TMenuItem
+      Caption = 'Options'
+      object MenuItem2: TMenuItem
+        Caption = 'Settings'
+        OnClick = MenuItem2Click
+      end
+    end
   end
 end
