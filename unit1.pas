@@ -9,7 +9,7 @@ uses
     //Math,
     Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics,
     Dialogs, StdCtrls, ExtCtrls, Menus, fpjson, jsonparser, gcHTTPClientThread,
-    TASeries, TASources, TACustomSource, DateUtils, fgl;
+    TASeries, TASources, TACustomSource, DateUtils, fgl, TAIntervalSources, TAChartUtils;
 
 
 { TForm1 }
@@ -67,6 +67,7 @@ type
         { private declarations }
         ArChart1Series: array of TLineSeries;
         ArChart1Sources: array of TInfluxDBSource;
+        DateAxisSource: TDateTimeIntervalChartSource;
 
     public
         { public declarations }
@@ -118,6 +119,10 @@ begin
     Memo1.ScrollBars := ssVertical;
     DoubleBuffered := True;
     Chart1.DoubleBuffered := True;
+    DateAxisSource:= TDateTimeIntervalChartSource.Create(Chart1);
+    Chart1.BottomAxis.Marks.Source:= DateAxisSource;
+    Chart1.BottomAxis.Marks.Style:= smsLabel;
+    //TSeriesMArksStyle.
 end;
 
 procedure TForm1.CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
@@ -220,6 +225,8 @@ begin
             //if not Assigned(ArChart1Series[i]) then
             ArChart1Series[i] := TLineSeries.Create(Chart1);
             ArChart1Series[i].Source := ArChart1Sources[i];
+            ArChart1Series[i].LinePen.Color:= Random($1000000);
+            ArChart1Series[i].LinePen.Width:= 2;
             Chart1.AddSeries(ArChart1Series[i]);
             i := i + 1;
         end;
