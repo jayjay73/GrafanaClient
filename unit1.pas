@@ -329,7 +329,7 @@ end;
 
 procedure TForm1.StopGraph(Sender: TObject);
 begin
-    if (WebGetThread <> nil) then
+    if Assigned (WebGetThread) then
         WebGetThread.Terminate;
 end;
 
@@ -337,18 +337,17 @@ procedure TForm1.AutoRefreshOn(Sender: TObject);
 begin
     MenuItem6.Checked := True;
     CheckBox1.Checked := True;
-    Edit5.Enabled := True;
-    memo1.Lines.Add(MenuItem6.Checked.ToString());
+    //Edit5.Enabled := True;
+    if (StrToInt(Edit5.Text) > 0) then
+       StartGraph(Sender);
 end;
 
 procedure TForm1.AutoRefreshOff(Sender: TObject);
 begin
     MenuItem6.Checked := False;
     CheckBox1.Checked := False;
-    Edit5.Enabled := False;
-    //autorefresh := 0;
-    if Assigned(WebGetThread) then
-        WebGetThread.Terminate;
+    //Edit5.Enabled := False;
+    StopGraph(Sender);
 end;
 
 end.
