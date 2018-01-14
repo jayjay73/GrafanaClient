@@ -7,51 +7,20 @@ object Form1: TForm1
   Caption = 'GrafanaClient'
   ClientHeight = 636
   ClientWidth = 816
+  Color = clGrayText
   Constraints.MinHeight = 300
   Constraints.MinWidth = 400
   Menu = MainMenu1
   OnCreate = FormCreate
-  Visible = False
-  object OKButton: TButton
-    Left = 632
-    Height = 24
-    Top = 0
-    Width = 75
-    Anchors = [akTop, akRight]
-    Caption = 'Go!'
-    OnClick = OKButtonClick
-    TabOrder = 0
-  end
-  object StopButton: TButton
-    Left = 727
-    Height = 25
-    Top = 0
-    Width = 75
-    Anchors = [akTop, akRight]
-    Caption = 'Stop'
-    Enabled = False
-    OnClick = StopButtonClick
-    TabOrder = 3
-  end
-  object Edit5: TEdit
-    Left = 568
-    Height = 23
-    Top = 3
-    Width = 43
-    Anchors = [akTop, akRight]
-    NumbersOnly = True
-    OnExit = Edit5Exit
-    TabOrder = 4
-    Text = '0'
-  end
+  Visible = True
   object Chart1: TChart
     AnchorSideLeft.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Splitter1
     Left = 0
-    Height = 438
-    Top = 29
+    Height = 463
+    Top = 24
     Width = 816
     AxisList = <    
       item
@@ -63,13 +32,13 @@ object Form1: TForm1
       item
         Grid.Color = cl3DDkShadow
         Alignment = calBottom
-        LabelSize = 20
+        LabelSize = 25
         Minors = <>
       end    
       item
         Grid.Visible = False
         Alignment = calRight
-        LabelSize = 35
+        LabelSize = 30
         Marks.Visible = False
         Minors = <>
       end    
@@ -89,7 +58,39 @@ object Form1: TForm1
       'TAChart'
     )
     Anchors = [akTop, akLeft, akRight, akBottom]
-    Color = clGrayText
+    ParentColor = True
+  end
+  object OKButton: TButton
+    Left = 640
+    Height = 24
+    Top = 10
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Go!'
+    OnClick = OKButtonClick
+    TabOrder = 0
+  end
+  object StopButton: TButton
+    Left = 727
+    Height = 25
+    Top = 9
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Stop'
+    Enabled = False
+    OnClick = StopButtonClick
+    TabOrder = 3
+  end
+  object Edit5: TEdit
+    Left = 576
+    Height = 23
+    Top = 11
+    Width = 43
+    Anchors = [akTop, akRight]
+    NumbersOnly = True
+    OnExit = Edit5Exit
+    TabOrder = 4
+    Text = '0'
   end
   object Splitter1: TSplitter
     AnchorSideLeft.Control = Owner
@@ -100,7 +101,7 @@ object Form1: TForm1
     Cursor = crVSplit
     Left = 0
     Height = 7
-    Top = 467
+    Top = 487
     Width = 816
     Align = alNone
     Anchors = [akLeft, akRight, akBottom]
@@ -108,58 +109,72 @@ object Form1: TForm1
     ParentColor = False
     ResizeAnchor = akTop
   end
+  object StatusBar1: TStatusBar
+    AnchorSideLeft.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 0
+    Height = 23
+    Top = 613
+    Width = 816
+    Panels = <>
+    ParentFont = False
+    SimpleText = 'Status'
+  end
+  object CancelButton: TButton
+    AnchorSideLeft.Control = StatusBar1
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = StatusBar1
+    AnchorSideRight.Control = StatusBar1
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = StatusBar1
+    AnchorSideBottom.Side = asrBottom
+    Left = 701
+    Height = 22
+    Top = 614
+    Width = 75
+    Anchors = [akTop, akRight]
+    BorderSpacing.Top = 1
+    BorderSpacing.Right = 40
+    Caption = 'Clear'
+    OnClick = CancelButtonClick
+    TabOrder = 1
+  end
   object Memo1: TMemo
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Splitter1
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Side = asrBottom
-    Left = 0
-    Height = 112
-    Top = 474
-    Width = 816
+    AnchorSideBottom.Control = StatusBar1
+    Left = 1
+    Height = 119
+    Top = 494
+    Width = 815
     Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 1
+    BorderStyle = bsNone
+    Color = clBlack
+    Font.Color = clSilver
+    Font.Height = -13
+    Font.Name = 'Courier New'
     Lines.Strings = (
       'Memo1'
     )
+    ParentFont = False
     TabOrder = 2
   end
-  object StatusBar1: TStatusBar
-    Left = 0
-    Height = 23
-    Top = 613
-    Width = 816
-    Panels = <>
-  end
-  object Label1: TLabel
-    Left = 616
-    Height = 15
-    Top = 8
-    Width = 5
-    Anchors = [akTop, akRight]
-    Caption = 's'
-    ParentColor = False
-  end
   object CheckBox1: TCheckBox
-    Left = 469
+    Left = 464
     Height = 19
-    Top = 3
-    Width = 91
+    Top = 15
+    Width = 104
     Anchors = [akTop, akRight]
-    Caption = 'Auto Refresh:'
+    Caption = 'Auto Refresh(s):'
     OnChange = CheckBox1Change
     TabOrder = 8
-  end
-  object CancelButton: TButton
-    Left = 727
-    Height = 24
-    Top = 584
-    Width = 75
-    Anchors = [akRight]
-    Caption = 'Clear'
-    OnClick = CancelButtonClick
-    TabOrder = 1
   end
   object MainMenu1: TMainMenu
     left = 88

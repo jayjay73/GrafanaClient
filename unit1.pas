@@ -38,7 +38,6 @@ type
         Chart1: TChart;
         CheckBox1: TCheckBox;
         Edit5: TEdit;
-        Label1: TLabel;
         MainMenu1: TMainMenu;
         MenuItem1: TMenuItem;
         MenuItem2: TMenuItem;
@@ -132,7 +131,6 @@ begin
     DateAxisSource := TDateTimeIntervalChartSource.Create(Chart1);
     Chart1.BottomAxis.Marks.Source := DateAxisSource;
     Chart1.BottomAxis.Marks.Style := smsLabel;
-    //TSeriesMArksStyle.
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
