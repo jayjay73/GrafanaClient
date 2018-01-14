@@ -3,6 +3,7 @@ object Form2: TForm2
   Height = 238
   Top = 0
   Width = 652
+  ActiveControl = Edit1
   Caption = 'Settings'
   ClientHeight = 238
   ClientWidth = 652

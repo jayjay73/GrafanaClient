@@ -7,10 +7,10 @@ interface
 
 uses
     //Math,
-    Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics,
-    Dialogs, StdCtrls, ExtCtrls, Menus, fpjson, jsonparser, gcHTTPClientThread,
-    TASeries, TASources, TACustomSource, DateUtils, fgl, TAIntervalSources, TAChartUtils,
-    Unit2;
+    Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics, Dialogs,
+    StdCtrls, ExtCtrls, Menus, ComCtrls, fpjson, jsonparser, gcHTTPClientThread,
+    TASeries, TASources, TACustomSource, DateUtils, fgl, TAIntervalSources,
+    TAChartUtils, Unit2;
 
 
 { TForm1 }
@@ -36,25 +36,42 @@ type
 
     TForm1 = class(TForm)
         Chart1: TChart;
+        CheckBox1: TCheckBox;
         Edit5: TEdit;
-        Label5: TLabel;
+        Label1: TLabel;
         MainMenu1: TMainMenu;
         MenuItem1: TMenuItem;
         MenuItem2: TMenuItem;
+        MenuItem3: TMenuItem;
+        MenuItem4: TMenuItem;
+        MenuItem5: TMenuItem;
+        MenuItem6: TMenuItem;
+        Splitter1: TSplitter;
+        StatusBar1: TStatusBar;
         StopButton: TButton;
         Memo1: TMemo;
         OKButton: TButton;
         CancelButton: TButton;
+        procedure CheckBox1Change(Sender: TObject);
         procedure CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
         procedure CopyResponse(response: string);
         procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure MenuItem2Click(Sender: TObject);
+        procedure MenuItem4Click(Sender: TObject);
+        procedure MenuItem5Click(Sender: TObject);
+        procedure MenuItem6Click(Sender: TObject);
         procedure OKButtonClick(Sender: TObject);
         procedure CancelButtonClick(Sender: TObject);
         procedure StopButtonClick(Sender: TObject);
         procedure WebGetThreadTerminates(Sender: TObject);
         procedure GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
+
+        procedure StartGraph(Sender: TObject);
+        procedure StopGraph(Sender: TObject);
+        procedure AutoRefreshOn(Sender: TObject);
+        procedure AutoRefreshOff(Sender: TObject);
+
 
     private
         { private declarations }
@@ -123,6 +140,24 @@ begin
     Form2.ShowModal;
 end;
 
+procedure TForm1.MenuItem4Click(Sender: TObject);
+begin
+    StartGraph(Sender);
+end;
+
+procedure TForm1.MenuItem5Click(Sender: TObject);
+begin
+    StopGraph(Sender);
+end;
+
+procedure TForm1.MenuItem6Click(Sender: TObject);
+begin
+    if (MenuItem6.Checked) then
+        AutorefreshOn(Sender)
+    else
+        AutorefreshOff(Sender);
+end;
+
 procedure TForm1.CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
 begin
     // get request params from main thread
@@ -135,7 +170,23 @@ begin
     request := Form2.Edit1.Text + '?' + R.DelimitedText;
     user := Form2.Edit6.Text;
     pass := Form2.Edit7.Text;
-    autorefresh := dataRefresh * 1000;
+    if CheckBox1.Checked then
+        autorefresh := dataRefresh * 1000
+    else
+        autorefresh := 0;
+
+end;
+
+procedure TForm1.CheckBox1Change(Sender: TObject);
+begin
+    if (Checkbox1.Checked) then
+    begin
+         AutorefreshOn(Sender);
+    end
+    else
+    begin
+         AutorefreshOff(Sender);
+    end;
 end;
 
 procedure TForm1.CopyResponse(response: string);
@@ -248,15 +299,23 @@ end;
 procedure TForm1.WebGetThreadTerminates(Sender: TObject);
 begin
     StopButton.Enabled := False;
+    MenuItem5.Enabled:= False;
 end;
 
 procedure TForm1.OKButtonClick(Sender: TObject);
 begin
+    StartGraph(Sender);
+end;
+
+procedure TForm1.StartGraph(Sender: TObject);
+begin
+    dataRefresh := StrToInt(Edit5.Text);
     TWebGetThread.CreateOrRecycle(WebGetThread);
     WebGetThread.OnSyncRequestParams := @CopyRequest;
     WebGetThread.OnSynchResponseData := @CopyResponse;
     WebGetThread.OnTerminate := @WebGetThreadTerminates;
     StopButton.Enabled := True;
+    MenuItem5.Enabled:= True;
 end;
 
 procedure TForm1.Edit5Exit(Sender: TObject);
@@ -269,11 +328,34 @@ begin
     Memo1.Clear;
 end;
 
-
 procedure TForm1.StopButtonClick(Sender: TObject);
+begin
+    StopGraph(Sender);
+end;
+
+procedure TForm1.StopGraph(Sender: TObject);
 begin
     if (WebGetThread <> nil) then
         WebGetThread.Terminate;
+end;
+
+procedure TForm1.AutoRefreshOn(Sender: TObject);
+begin
+    MenuItem6.Checked:= true;
+    CheckBox1.Checked:= true;
+    Edit5.Enabled:= true;
+    memo1.lines.Add(MenuItem6.Checked.ToString());
+end;
+
+procedure TForm1.AutoRefreshOff(Sender: TObject);
+begin
+    MenuItem6.Checked:= false;
+    CheckBox1.Checked:= false;
+    Edit5.Enabled:= false;
+    //autorefresh := 0;
+    if Assigned(WebGetThread) then
+        WebGetThread.Terminate;
+    memo1.lines.Add(MenuItem6.Checked.toString());
 end;
 
 end.
