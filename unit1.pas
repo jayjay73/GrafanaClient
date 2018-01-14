@@ -46,6 +46,8 @@ type
         MenuItem4: TMenuItem;
         MenuItem5: TMenuItem;
         MenuItem6: TMenuItem;
+        Panel1: TPanel;
+        Panel2: TPanel;
         Splitter1: TSplitter;
         StatusBar1: TStatusBar;
         StopButton: TButton;
@@ -126,13 +128,18 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-    Memo1.ScrollBars := ssVertical;
+    //Memo1.ScrollBars := ssVertical;
     DoubleBuffered := True;
     Chart1.DoubleBuffered := True;
+    Panel1.DoubleBuffered:= true;
+    Panel2.DoubleBuffered:= true;
     DateAxisSource := TDateTimeIntervalChartSource.Create(Chart1);
     Chart1.BottomAxis.Marks.Source := DateAxisSource;
     Chart1.BottomAxis.Marks.Style := smsLabel;
     //TSeriesMArksStyle.
+    //OKButton.Parent:= Chart1;
+    //Chart1.IsParentOf(OKButton);
+    //OKButton.ParentWindow:=Chart1.Handle;
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
