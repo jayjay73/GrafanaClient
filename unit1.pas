@@ -23,13 +23,13 @@ type
         timecol, valuecol: integer;
     end;
 
-    gcTTagsList = specialize TFPGMap<String, String>;
+    gcTTagsList = specialize TFPGMap<string, string>;
 
     gcTSeries = record
-      name: string;
-      tags: gcTTagsList;
-      time: array of TDateTime;
-      value: array of double;
+        Name: string;
+        tags: gcTTagsList;
+        time: array of TDateTime;
+        Value: array of double;
     end;
 
     gcTResultData = array of array of gcTSeries;
@@ -129,9 +129,9 @@ begin
     Memo1.ScrollBars := ssVertical;
     DoubleBuffered := True;
     Chart1.DoubleBuffered := True;
-    DateAxisSource:= TDateTimeIntervalChartSource.Create(Chart1);
-    Chart1.BottomAxis.Marks.Source:= DateAxisSource;
-    Chart1.BottomAxis.Marks.Style:= smsLabel;
+    DateAxisSource := TDateTimeIntervalChartSource.Create(Chart1);
+    Chart1.BottomAxis.Marks.Source := DateAxisSource;
+    Chart1.BottomAxis.Marks.Style := smsLabel;
     //TSeriesMArksStyle.
 end;
 
@@ -158,6 +158,14 @@ begin
         AutorefreshOff(Sender);
 end;
 
+procedure TForm1.CheckBox1Change(Sender: TObject);
+begin
+    if (Checkbox1.Checked) then
+        AutorefreshOn(Sender)
+    else
+        AutorefreshOff(Sender);
+end;
+
 procedure TForm1.CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
 begin
     // get request params from main thread
@@ -175,18 +183,6 @@ begin
     else
         autorefresh := 0;
 
-end;
-
-procedure TForm1.CheckBox1Change(Sender: TObject);
-begin
-    if (Checkbox1.Checked) then
-    begin
-         AutorefreshOn(Sender);
-    end
-    else
-    begin
-         AutorefreshOff(Sender);
-    end;
 end;
 
 procedure TForm1.CopyResponse(response: string);
@@ -225,7 +221,7 @@ begin
             Memo1.Lines.Add('Points: ' + numPoints.toString);
 
             SetLength(resultData[iRes][iSer].time, numPoints);
-            SetLength(resultData[iRes][iSer].value, numPoints);
+            SetLength(resultData[iRes][iSer].Value, numPoints);
 
             // iterate over "columns" and find out which is time (X-axis) and which is value (Y-axis)
             for eJson in TJSONArray(jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('columns')) do
@@ -246,18 +242,18 @@ begin
             Memo1.Lines.Add('Value name: ' + valuename);
 
             // iterate over "values"; each value is a logical point in the graph
-            iPoint:= 0;
+            iPoint := 0;
             for eJson in TJSONArray(jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('values')) do
             begin
                 resultData[iRes][iSer].time[iPoint] := UnixToDateTime(eJson.Value.Items[timecol].AsInteger);
-                resultData[iRes][iSer].value[iPoint] := eJson.Value.Items[valuecol].AsFloat;
+                resultData[iRes][iSer].Value[iPoint] := eJson.Value.Items[valuecol].AsFloat;
                 //Memo1.Lines.Add('point: ' + iPoint.ToString);
                 //Memo1.Lines.Add('time: ' + FloatToStr(eJson.Value.Items[timecol].asFloat));
                 //Memo1.Lines.Add('time: ' + FloatToStr(resultData[iRes][iSer].time[iPoint]));
 
                 //Memo1.Lines.Add('data: ' + FloatToStr(eJson.Value.Items[valuecol].asFloat));
                 //Memo1.Lines.Add('data: ' + FloatToStr(resultData[iRes][iSer].value[iPoint]));
-                iPoint:= iPoint + 1;
+                iPoint := iPoint + 1;
             end;
 
             SetLength(ArChart1Sources, i + 1);
@@ -274,8 +270,8 @@ begin
             //if not Assigned(ArChart1Series[i]) then
             ArChart1Series[i] := TLineSeries.Create(Chart1);
             ArChart1Series[i].Source := ArChart1Sources[i];
-            ArChart1Series[i].LinePen.Color:= Random($1000000);
-            ArChart1Series[i].LinePen.Width:= 2;
+            ArChart1Series[i].LinePen.Color := Random($1000000);
+            ArChart1Series[i].LinePen.Width := 2;
             Chart1.AddSeries(ArChart1Series[i]);
             i := i + 1;
         end;
@@ -293,13 +289,13 @@ begin
     AItem.X := resultData[ASource.reslt][ASource.series].time[AIndex];
     // next line produces call trace
     //AItem.Y := jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
-    AItem.Y := resultData[ASource.reslt][ASource.series].value[AIndex]
+    AItem.Y := resultData[ASource.reslt][ASource.series].Value[AIndex];
 end;
 
 procedure TForm1.WebGetThreadTerminates(Sender: TObject);
 begin
     StopButton.Enabled := False;
-    MenuItem5.Enabled:= False;
+    MenuItem5.Enabled := False;
 end;
 
 procedure TForm1.OKButtonClick(Sender: TObject);
@@ -315,7 +311,7 @@ begin
     WebGetThread.OnSynchResponseData := @CopyResponse;
     WebGetThread.OnTerminate := @WebGetThreadTerminates;
     StopButton.Enabled := True;
-    MenuItem5.Enabled:= True;
+    MenuItem5.Enabled := True;
 end;
 
 procedure TForm1.Edit5Exit(Sender: TObject);
@@ -341,21 +337,20 @@ end;
 
 procedure TForm1.AutoRefreshOn(Sender: TObject);
 begin
-    MenuItem6.Checked:= true;
-    CheckBox1.Checked:= true;
-    Edit5.Enabled:= true;
-    memo1.lines.Add(MenuItem6.Checked.ToString());
+    MenuItem6.Checked := True;
+    CheckBox1.Checked := True;
+    Edit5.Enabled := True;
+    memo1.Lines.Add(MenuItem6.Checked.ToString());
 end;
 
 procedure TForm1.AutoRefreshOff(Sender: TObject);
 begin
-    MenuItem6.Checked:= false;
-    CheckBox1.Checked:= false;
-    Edit5.Enabled:= false;
+    MenuItem6.Checked := False;
+    CheckBox1.Checked := False;
+    Edit5.Enabled := False;
     //autorefresh := 0;
     if Assigned(WebGetThread) then
         WebGetThread.Terminate;
-    memo1.lines.Add(MenuItem6.Checked.toString());
 end;
 
 end.
