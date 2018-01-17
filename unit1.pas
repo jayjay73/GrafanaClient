@@ -10,7 +10,7 @@ uses
     Classes, SysUtils, FileUtil, TAGraph, Forms, Controls, Graphics, Dialogs,
     StdCtrls, ExtCtrls, Menus, ComCtrls, fpjson, jsonparser, gcHTTPClientThread,
     TASeries, TASources, TACustomSource, DateUtils, fgl, TAIntervalSources,
-    TAChartUtils, Unit2;
+    TAChartUtils, Unit2, strutils;
 
 
 { TForm1 }
@@ -37,6 +37,7 @@ type
     TForm1 = class(TForm)
         Chart1: TChart;
         CheckBox1: TCheckBox;
+        Edit1: TEdit;
         Edit5: TEdit;
         MainMenu1: TMainMenu;
         MenuItem1: TMenuItem;
@@ -46,6 +47,7 @@ type
         MenuItem5: TMenuItem;
         MenuItem6: TMenuItem;
         Splitter1: TSplitter;
+        StaticText1: TStaticText;
         StatusBar1: TStatusBar;
         StopButton: TButton;
         Memo1: TMemo;
@@ -170,7 +172,7 @@ begin
     R := TStringList.Create;
     R.Delimiter := '&';
     R.values['db'] := Form2.Edit2.Text;
-    R.values['q'] := URLEncode(Form2.Edit3.Text);
+    R.values['q'] := URLEncode(ReplaceText(Form2.Edit3.Text, '${interval}', Edit1.Text));
     R.values['epoch'] := Form2.Edit4.Text;
     Memo1.Lines.Add(R.DelimitedText);
     request := Form2.Edit1.Text + '?' + R.DelimitedText;
