@@ -191,12 +191,15 @@ var
     eJson: TJSONEnum;
     timecol, valuecol: integer;
     valuename: string;
+    tempDate: TDateTime;
 
 begin
     // pass data to main thread
     Memo1.Lines.Add(DateTimeToStr(Now));
 
     jData := GetJSON(response);
+    Memo1.Lines.Add(jData.AsJSON);
+
     numResults := jData.GetPath('results').Count;
     Memo1.Lines.Add('numResults: ' + numResults.toString);
 
@@ -216,9 +219,10 @@ begin
         for iSer := 0 to numSeries - 1 do
         begin
             numPoints := jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('values').Count;
-            Memo1.Lines.Add('iRes: ' + iRes.ToString + 'iSer: ' + iSer.toString);
-            Memo1.Lines.Add('i: ' + i.ToString);
-            Memo1.Lines.Add('Points: ' + numPoints.toString);
+            Memo1.Lines.Add('    iRes: ' + iRes.ToString);
+            Memo1.Lines.Add('    iSer: ' + iSer.toString);
+            Memo1.Lines.Add('       i: ' + i.ToString);
+            Memo1.Lines.Add('# Points: ' + numPoints.toString);
 
             SetLength(resultData[iRes][iSer].time, numPoints);
             SetLength(resultData[iRes][iSer].Value, numPoints);
@@ -245,14 +249,29 @@ begin
             iPoint := 0;
             for eJson in TJSONArray(jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('values')) do
             begin
-                resultData[iRes][iSer].time[iPoint] := UnixToDateTime(eJson.Value.Items[timecol].AsInteger);
-                resultData[iRes][iSer].Value[iPoint] := eJson.Value.Items[valuecol].AsFloat;
                 //Memo1.Lines.Add('point: ' + iPoint.ToString);
+                tempDate:= UnixToDateTime(eJson.Value.Items[timecol].AsInteger);
+                //Memo1.Lines.Add('date: ' + FloatToStr(resultData[iRes][iSer].time[iPoint]));
+                resultData[iRes][iSer].time[iPoint] := tempDate;
+
+                if (not eJson.Value.Items[valuecol].IsNull) then
+                begin
+                    resultData[iRes][iSer].Value[iPoint] := eJson.Value.Items[valuecol].AsFloat;
+                end
+                else
+                begin
+                    Memo1.Lines.Add('date: ' + FloatToStr(resultData[iRes][iSer].time[iPoint]) + ' value: Null!');
+                    resultData[iRes][iSer].Value[iPoint] := 0;
+                end;
+
+                //Memo1.Lines.Add('value: ' + FloatToStr(resultData[iRes][iSer].Value[iPoint]));
+
                 //Memo1.Lines.Add('time: ' + FloatToStr(eJson.Value.Items[timecol].asFloat));
                 //Memo1.Lines.Add('time: ' + FloatToStr(resultData[iRes][iSer].time[iPoint]));
 
                 //Memo1.Lines.Add('data: ' + FloatToStr(eJson.Value.Items[valuecol].asFloat));
                 //Memo1.Lines.Add('data: ' + FloatToStr(resultData[iRes][iSer].value[iPoint]));
+
                 iPoint := iPoint + 1;
             end;
 

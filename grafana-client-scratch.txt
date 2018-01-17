@@ -178,3 +178,13 @@ epoch=ms
 Memo1.Lines.Add('time: ' + FloatToStr(eJson.Value.Items[valuecol].asFloat));
 Memo1.Lines.Add('time: ' + FloatToStr(resultData[iRes][iSer].value[iPoint]));
 
+${interval}
+
+https://grafana-prax.dfd-hamburg.de/api/datasources/proxy/6/query?
+db=telegraf&
+q=SELECT mean("BusyWorkers") FROM "apache" WHERE ("host" =~ /^(fidipmid01\.dfd-hamburg\.de|fidipmid31\.dfd-hamburg\.de)$/ AND "port" <> '44000') AND ${interval} GROUP BY time(30s), "tag1" fill(null)&
+epoch=ms
+
+SELECT mean(load1) as load1,mean(load5) as load5,mean(load15) as load15 FROM "system" WHERE host =~ /grafplog01.dfd-hamburg.de$/ AND ${interval} GROUP BY time(1s), * ORDER BY asc
+
+SELECT mean(load1) as load1 FROM "system" WHERE host =~ /grafplog01.dfd-hamburg.de$/ AND ${interval} GROUP BY time(1s), * ORDER BY asc
