@@ -6,7 +6,7 @@ interface
 
 uses
     Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-    LResources;
+    LResources, Math;
 
 type
 
@@ -30,7 +30,8 @@ type
     end;
 
     TConfiguration = class (TComponent)
-
+        procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
+        //destructor Destroy; override;
     end;
 
     { TForm2 }
@@ -54,6 +55,8 @@ type
         Config: TConfiguration;
         Memo1: TMemo;
         procedure Button1Click(Sender: TObject);
+        procedure FormCreate(Sender: TObject);
+        procedure OnFindClass(Reader: TReader; const AClassName: string; var ComponentClass: TComponentClass);
     private
 
     public
@@ -75,36 +78,58 @@ begin
     AStream.Read(Result[1],length(Result));
 end;
 
+procedure TConfiguration.GetChildren(Proc: TGetChildProc; Root: TComponent);
+var
+  i: Integer;
+begin
+  if Root = self then
+    for i:=0 to ComponentCount-1 do
+      if Components[i].GetParentComponent = nil then
+        Proc(Components[i]);
+end;
+
+//destructor TConfiguration.Destroy;
+//var
+//  i: integer;
+//begin
+//  for i:=0 to ComponentCount-1 do
+//    begin
+//         Components[i].free;
+//    end;
+//  inherited Destroy;
+//end;
+
 { TForm2 }
 
 procedure TForm2.Button1Click(Sender: TObject);
 var
     tempConfigItem: TConfigItemDatasource = nil;
-    AStream: TMemoryStream;
+    AStream: TFileStream;
 begin
      if (not Assigned(Config)) then
      begin
          Config:= TConfiguration.Create(Form2);
-         //Config.SetSubComponent(true);
      end;
      if (not Assigned(tempConfigItem)) then
      begin
          tempConfigItem:= TConfigItemDatasource.Create(Config);
-         tempConfigItem.SetSubComponent(true);
+         tempConfigItem.DataSourceName:= 'datasource1';
+         tempConfigItem.URL:= Edit1.Text;
+         tempConfigItem.user:= Edit6.Text;
+         tempConfigItem.pass:= Edit7.Text;
+         tempConfigItem.DB:= Edit2.Text;
+         tempConfigItem.query:= Edit3.Text;
+         tempConfigItem.epoch:= Edit4.Text;
+         //tempConfigItem.SetSubComponent(true);
      end;
-
-     tempConfigItem.DataSourceName:= 'datasource1';
-     tempConfigItem.URL:= Edit1.Text;
-     tempConfigItem.user:= Edit6.Text;
-     tempConfigItem.pass:= Edit7.Text;
-     tempConfigItem.DB:= Edit2.Text;
-     tempConfigItem.query:= Edit3.Text;
-     tempConfigItem.epoch:= Edit4.Text;
 
      //Config.InsertComponent(tempConfigItem);
      //tempConfigItem.SetParentComponent(Config);
 
-       AStream:=TMemoryStream.Create;
+     Memo1.Lines.Add(IntToStr(Config.ComponentCount));
+
+
+     AStream:=TFileStream.Create('gcConfig.txt', fmOpenWrite);
   try
     WriteComponentAsTextToStream(AStream, Config);
     //SaveStreamAsString(AStream);
@@ -112,6 +137,27 @@ begin
   finally
     AStream.Free;
   end;
+end;
+
+procedure TForm2.FormCreate(Sender: TObject);
+var
+    tempConfigItem: TConfigItemDatasource = nil;
+    AStream: TFileStream;
+begin
+     if (not Assigned(Config)) then
+     begin
+         AStream:=TFileStream.Create('gcConfig.txt', fmOpenRead);
+         ReadComponentFromTextStream(AStream, TComponent(Config), @OnFindClass, Form2);
+     end;
+     memo1.lines.add(TConfigItemDatasource(Config.Components[1]).datasourceName);
+end;
+
+procedure TForm2.OnFindClass(Reader: TReader; const AClassName: string; var ComponentClass: TComponentClass);
+begin
+  if CompareText(AClassName,'TConfiguration')=0 then
+    ComponentClass:=TConfiguration
+  else if CompareText(AClassName,'TConfigItemDatasource')=0 then
+    ComponentClass:=TConfigItemDatasource;
 end;
 
 end.

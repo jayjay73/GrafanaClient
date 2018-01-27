@@ -17,12 +17,6 @@ uses
 
 type
 
-    TInfluxDBSource = class(TUserDefinedChartSource)
-    public
-        reslt, series: integer;
-        timecol, valuecol: integer;
-    end;
-
     gcTTagsList = specialize TFPGMap<string, string>;
 
     gcTSeries = record
@@ -33,6 +27,13 @@ type
     end;
 
     gcTResultData = array of array of gcTSeries;
+
+    TInfluxDBSource = class(TUserDefinedChartSource)
+    public
+        reslt, series: integer;
+        timecol, valuecol: integer;
+        data: gcTSeries;
+    end;
 
     TForm1 = class(TForm)
         Chart1: TChart;
@@ -273,6 +274,8 @@ begin
                 //Memo1.Lines.Add('data: ' + FloatToStr(resultData[iRes][iSer].value[iPoint]));
 
                 iPoint := iPoint + 1;
+                //if ((iPoint mod 100) = 0) then
+                //    Application.ProcessMessages;
             end;
 
             SetLength(ArChart1Sources, i + 1);
@@ -282,6 +285,7 @@ begin
             ArChart1Sources[i].series := iSer;
             ArChart1Sources[i].timecol := timecol;
             ArChart1Sources[i].valuecol := valuecol;
+            //ArChart1Sources[i].data:= resultData[iRes][iSer];
             ArChart1Sources[i].PointsNumber := numPoints;
             ArChart1Sources[i].OnGetChartDataItem := TGetChartDataItemEvent(@GetJSONPoint);
 
@@ -290,7 +294,7 @@ begin
             ArChart1Series[i] := TLineSeries.Create(Chart1);
             ArChart1Series[i].Source := ArChart1Sources[i];
             ArChart1Series[i].LinePen.Color := Random($1000000);
-            ArChart1Series[i].LinePen.Width := 2;
+            ArChart1Series[i].LinePen.Width := 1;
             Chart1.AddSeries(ArChart1Series[i]);
             i := i + 1;
         end;
@@ -305,10 +309,10 @@ end;
 procedure TForm1.GetJSONPoint(ASource: TInfluxDBSource; AIndex: integer; var AItem: TChartDataItem);
 begin
     //AItem.X := UnixToDateTime(jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.timecol].AsInteger);
-    AItem.X := resultData[ASource.reslt][ASource.series].time[AIndex];
+    AItem.X := resultData[ASource.reslt, ASource.series].time[AIndex];
     // next line produces call trace
     //AItem.Y := jData.GetPath('results').Items[ASource.reslt].GetPath('series').Items[ASource.series].GetPath('values').Items[AIndex].Items[ASource.valuecol].AsFloat;
-    AItem.Y := resultData[ASource.reslt][ASource.series].Value[AIndex];
+    AItem.Y := resultData[ASource.reslt, ASource.series].Value[AIndex];
 end;
 
 procedure TForm1.WebGetThreadTerminates(Sender: TObject);

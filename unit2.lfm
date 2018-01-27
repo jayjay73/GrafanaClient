@@ -9,6 +9,7 @@ object Form2: TForm2
   ClientWidth = 652
   Color = clGrayText
   Constraints.MinWidth = 652
+  OnCreate = FormCreate
   Position = poMainFormCenter
   Visible = False
   object Edit1: TEdit
