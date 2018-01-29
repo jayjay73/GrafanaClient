@@ -32,12 +32,13 @@ type
     public
         reslt, series: integer;
         timecol, valuecol: integer;
-        data: gcTSeries;
+        Data: gcTSeries;
     end;
 
     TForm1 = class(TForm)
         Chart1: TChart;
         CheckBox1: TCheckBox;
+        ComboBox1: TComboBox;
         Edit1: TEdit;
         Edit5: TEdit;
         MainMenu1: TMainMenu;
@@ -55,6 +56,7 @@ type
         OKButton: TButton;
         CancelButton: TButton;
         procedure CheckBox1Change(Sender: TObject);
+        procedure ComboBox1Change(Sender: TObject);
         procedure CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
         procedure CopyResponse(response: string);
         procedure Edit5Exit(Sender: TObject);
@@ -127,6 +129,8 @@ end;
 
 
 procedure TForm1.FormCreate(Sender: TObject);
+var
+    i: integer;
 begin
     Memo1.ScrollBars := ssVertical;
     DoubleBuffered := True;
@@ -134,6 +138,17 @@ begin
     DateAxisSource := TDateTimeIntervalChartSource.Create(Chart1);
     Chart1.BottomAxis.Marks.Source := DateAxisSource;
     Chart1.BottomAxis.Marks.Style := smsLabel;
+    for i := 0 to Config.ComponentCount - 1 do
+    begin
+        ComboBox1.Items.Add(Config.Components[i].Name);
+    end;
+    for i := 0 to ComboBox1.Items.Count - 1 do
+        if ComboBox1.items[i] = Config.lastDataSource then
+        begin
+            ComboBox1.ItemIndex := i;
+            OKButton.Enabled := True;
+            MenuItem4.Enabled := True;
+        end;
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
@@ -167,18 +182,35 @@ begin
         AutorefreshOff(Sender);
 end;
 
+procedure TForm1.ComboBox1Change(Sender: TObject);
+begin
+    if ComboBox1.Text = '' then
+    begin
+        OKButton.Enabled := False;
+        MenuItem4.Enabled := False;
+    end
+    else
+    begin
+        OKButton.Enabled := True;
+        MenuItem4.Enabled := True;
+        Config.lastDataSource := ComboBox1.Text;
+    end;
+end;
+
 procedure TForm1.CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
 begin
     // get request params from main thread
+    if ComboBox1.Text = '' then
+        Exit;
     R := TStringList.Create;
     R.Delimiter := '&';
-    R.values['db'] := Form2.Edit2.Text;
-    R.values['q'] := URLEncode(ReplaceText(Form2.Edit3.Text, '${interval}', Edit1.Text));
-    R.values['epoch'] := Form2.Edit4.Text;
+    R.values['db'] := TConfigItemDatasource(Config.FindComponent(ComboBox1.Text)).DB;
+    R.values['q'] := URLEncode(ReplaceText(TConfigItemDatasource(Config.FindComponent(ComboBox1.Text)).query, '${interval}', Edit1.Text));
+    R.values['epoch'] := TConfigItemDatasource(Config.FindComponent(ComboBox1.Text)).epoch;
     Memo1.Lines.Add(R.DelimitedText);
-    request := Form2.Edit1.Text + '?' + R.DelimitedText;
-    user := Form2.Edit6.Text;
-    pass := Form2.Edit7.Text;
+    request := TConfigItemDatasource(Config.FindComponent(ComboBox1.Text)).URL + '?' + R.DelimitedText;
+    user := TConfigItemDatasource(Config.FindComponent(ComboBox1.Text)).user;
+    pass := TConfigItemDatasource(Config.FindComponent(ComboBox1.Text)).pass;
     if CheckBox1.Checked then
         autorefresh := dataRefresh * 1000
     else
@@ -251,7 +283,7 @@ begin
             for eJson in TJSONArray(jData.GetPath('results').Items[iRes].GetPath('series').Items[iSer].GetPath('values')) do
             begin
                 //Memo1.Lines.Add('point: ' + iPoint.ToString);
-                tempDate:= UnixToDateTime(eJson.Value.Items[timecol].AsInteger);
+                tempDate := UnixToDateTime(eJson.Value.Items[timecol].AsInteger);
                 //Memo1.Lines.Add('date: ' + FloatToStr(resultData[iRes][iSer].time[iPoint]));
                 resultData[iRes][iSer].time[iPoint] := tempDate;
 
@@ -354,7 +386,7 @@ end;
 
 procedure TForm1.StopGraph(Sender: TObject);
 begin
-    if Assigned (WebGetThread) then
+    if Assigned(WebGetThread) then
         WebGetThread.Terminate;
 end;
 
@@ -364,7 +396,7 @@ begin
     CheckBox1.Checked := True;
     //Edit5.Enabled := True;
     if (StrToInt(Edit5.Text) > 0) then
-       StartGraph(Sender);
+        StartGraph(Sender);
 end;
 
 procedure TForm1.AutoRefreshOff(Sender: TObject);

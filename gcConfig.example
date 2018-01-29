@@ -1,0 +1,23 @@
+object TConfiguration
+  lastDataSource = 'GrafanaPlayground1'
+  object datasourceY: TConfigItemDatasource
+    URL = 'http://play.grafana.org/api/datasources/proxy/2/query'
+    DB = 'site'
+    query = 'SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND ${interval} GROUP BY  "hostname"'
+    epoch = 's'
+  end
+  object foo: TConfigItemDatasource
+    URL = 'bla'
+    user = 'blubb'
+    pass = 'secrit'
+    DB = 'baz'
+    query = 'blurbl'
+    epoch = 'ms'
+  end
+  object GrafanaPlayground1: TConfigItemDatasource
+    URL = 'http://play.grafana.org/api/datasources/proxy/2/query'
+    DB = 'site'
+    query = 'SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND ${interval} GROUP BY  "hostname"'
+    epoch = 's'
+  end
+end

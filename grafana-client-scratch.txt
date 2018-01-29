@@ -188,3 +188,15 @@ epoch=ms
 SELECT mean(load1) as load1,mean(load5) as load5,mean(load15) as load15 FROM "system" WHERE host =~ /grafplog01.dfd-hamburg.de$/ AND ${interval} GROUP BY time(1s), * ORDER BY asc
 
 SELECT mean(load1) as load1 FROM "system" WHERE host =~ /grafplog01.dfd-hamburg.de$/ AND ${interval} GROUP BY time(1s), * ORDER BY asc
+
+SELECT mean(value) FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND ${interval} GROUP BY time(1m), "hostname"
+
+    AItem.X := resultData[ASource.reslt][ASource.series].time[AIndex];
+    AItem.Y := resultData[ASource.reslt][ASource.series].Value[AIndex];
+    
+LabeledEdit1.Enabled:= true;
+LabeledEdit2.Enabled:= true;
+LabeledEdit4.Enabled:= true;
+LabeledEdit5.Enabled:= true;
+LabeledEdit3.Enabled:= true;
+LabeledEdit6.Enabled:= true;

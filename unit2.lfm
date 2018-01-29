@@ -1,155 +1,245 @@
 object Form2: TForm2
   Left = 0
-  Height = 428
+  Height = 453
   Top = 0
-  Width = 652
-  ActiveControl = Edit1
+  Width = 808
+  ActiveControl = Button1
   Caption = 'Settings'
-  ClientHeight = 428
-  ClientWidth = 652
+  ClientHeight = 453
+  ClientWidth = 808
   Color = clGrayText
+  Constraints.MinHeight = 438
   Constraints.MinWidth = 652
   OnCreate = FormCreate
   Position = poMainFormCenter
+  LCLVersion = '1.8.0.6'
   Visible = False
-  object Edit1: TEdit
-    AnchorSideLeft.Side = asrBottom
-    Left = 64
-    Height = 23
-    Top = 64
-    Width = 568
-    Anchors = [akTop, akLeft, akRight]
-    TabOrder = 0
-    Text = 'http://play.grafana.org/api/datasources/proxy/2/query'
-  end
-  object Edit2: TEdit
-    Left = 64
-    Height = 23
-    Top = 96
-    Width = 176
-    TabOrder = 1
-    Text = 'site'
-  end
-  object Label1: TLabel
-    Left = 27
-    Height = 15
-    Top = 64
-    Width = 24
-    Caption = 'URL:'
-    ParentColor = False
-  end
-  object Label2: TLabel
-    Left = 33
-    Height = 15
-    Top = 96
-    Width = 18
-    Caption = 'DB:'
-    ParentColor = False
-  end
-  object Label3: TLabel
-    Left = 16
-    Height = 15
-    Top = 128
-    Width = 35
-    Caption = 'Query:'
-    ParentColor = False
-  end
-  object Edit3: TEdit
-    Left = 64
-    Height = 23
-    Top = 128
-    Width = 568
-    Anchors = [akTop, akLeft, akRight]
-    TabOrder = 2
-    Text = 'SELECT value FROM "logins.count" WHERE ("datacenter" =~ /^Europe$/ AND "hostname" =~ /^server3$/) AND ${interval} GROUP BY  "hostname"'
-  end
-  object Label4: TLabel
-    Left = 17
-    Height = 15
-    Top = 160
-    Width = 36
-    Caption = 'Epoch:'
-    ParentColor = False
-  end
-  object Edit4: TEdit
-    Left = 64
-    Height = 23
-    Top = 160
-    Width = 80
-    TabOrder = 3
-    Text = 's'
-  end
-  object Label6: TLabel
-    Left = 264
-    Height = 15
-    Top = 96
-    Width = 26
-    Caption = 'User:'
-    ParentColor = False
-  end
-  object Edit6: TEdit
-    Left = 304
-    Height = 23
-    Top = 96
-    Width = 112
-    TabOrder = 4
-  end
-  object Label7: TLabel
-    Left = 448
-    Height = 15
-    Top = 96
-    Width = 53
-    Caption = 'Password:'
-    ParentColor = False
-  end
-  object Edit7: TEdit
-    Left = 512
-    Height = 23
-    Top = 96
-    Width = 120
-    EchoMode = emPassword
-    PasswordChar = '*'
-    TabOrder = 5
-  end
   object Label5: TLabel
     Left = 8
     Height = 37
     Top = 8
-    Width = 297
+    Width = 312
     Align = alCustom
-    Caption = 'Data source cofiguration:'
+    Caption = 'Data source configuration:'
     Font.Height = -27
     ParentColor = False
     ParentFont = False
   end
   object Button1: TButton
-    Left = 456
+    Left = 612
     Height = 25
-    Top = 374
+    Top = 399
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     OnClick = Button1Click
-    TabOrder = 6
+    TabOrder = 0
   end
   object Button2: TButton
-    Left = 557
+    Left = 713
     Height = 25
-    Top = 374
+    Top = 399
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
-    TabOrder = 7
+    TabOrder = 1
   end
   object Memo1: TMemo
-    Left = 17
-    Height = 162
-    Top = 199
-    Width = 615
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 288
+    Height = 139
+    Top = 248
+    Width = 517
     Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Right = 3
     Lines.Strings = (
       'Memo1'
     )
+    TabOrder = 2
+  end
+  object LabeledEdit1: TLabeledEdit
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 315
+    Height = 23
+    Top = 64
+    Width = 490
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Right = 3
+    EditLabel.AnchorSideTop.Control = LabeledEdit1
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = LabeledEdit1
+    EditLabel.AnchorSideBottom.Control = LabeledEdit1
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 288
+    EditLabel.Height = 15
+    EditLabel.Top = 68
+    EditLabel.Width = 24
+    EditLabel.Caption = 'URL:'
+    EditLabel.ParentColor = False
+    LabelPosition = lpLeft
+    TabOrder = 3
+    OnExit = LabeledEdit_Exit
+  end
+  object LabeledEdit2: TLabeledEdit
+    Left = 315
+    Height = 23
+    Top = 96
+    Width = 79
+    EditLabel.AnchorSideTop.Control = LabeledEdit2
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = LabeledEdit2
+    EditLabel.AnchorSideBottom.Control = LabeledEdit2
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 286
+    EditLabel.Height = 15
+    EditLabel.Top = 100
+    EditLabel.Width = 26
+    EditLabel.Caption = 'User:'
+    EditLabel.ParentColor = False
+    LabelPosition = lpLeft
+    TabOrder = 4
+    OnExit = LabeledEdit_Exit
+  end
+  object LabeledEdit3: TLabeledEdit
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 315
+    Height = 23
+    Top = 176
+    Width = 490
+    Anchors = [akTop, akLeft, akRight]
+    BorderSpacing.Right = 3
+    EditLabel.AnchorSideTop.Control = LabeledEdit3
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = LabeledEdit3
+    EditLabel.AnchorSideBottom.Control = LabeledEdit3
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 277
+    EditLabel.Height = 15
+    EditLabel.Top = 180
+    EditLabel.Width = 35
+    EditLabel.Caption = 'Query:'
+    EditLabel.ParentColor = False
+    LabelPosition = lpLeft
+    TabOrder = 5
+    OnExit = LabeledEdit_Exit
+  end
+  object LabeledEdit4: TLabeledEdit
+    Left = 473
+    Height = 23
+    Top = 96
+    Width = 79
+    EchoMode = emPassword
+    EditLabel.AnchorSideTop.Control = LabeledEdit4
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = LabeledEdit4
+    EditLabel.AnchorSideBottom.Control = LabeledEdit4
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 417
+    EditLabel.Height = 15
+    EditLabel.Top = 100
+    EditLabel.Width = 53
+    EditLabel.Caption = 'Password:'
+    EditLabel.ParentColor = False
+    LabelPosition = lpLeft
+    PasswordChar = '*'
+    TabOrder = 6
+    OnExit = LabeledEdit_Exit
+  end
+  object LabeledEdit5: TLabeledEdit
+    Left = 315
+    Height = 23
+    Top = 128
+    Width = 79
+    EditLabel.AnchorSideTop.Control = LabeledEdit5
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = LabeledEdit5
+    EditLabel.AnchorSideBottom.Control = LabeledEdit5
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 294
+    EditLabel.Height = 15
+    EditLabel.Top = 132
+    EditLabel.Width = 18
+    EditLabel.Caption = 'DB:'
+    EditLabel.ParentColor = False
+    LabelPosition = lpLeft
+    TabOrder = 7
+    OnExit = LabeledEdit_Exit
+  end
+  object LabeledEdit6: TLabeledEdit
+    Left = 315
+    Height = 23
+    Top = 208
+    Width = 79
+    EditLabel.AnchorSideTop.Control = LabeledEdit6
+    EditLabel.AnchorSideTop.Side = asrCenter
+    EditLabel.AnchorSideRight.Control = LabeledEdit6
+    EditLabel.AnchorSideBottom.Control = LabeledEdit6
+    EditLabel.AnchorSideBottom.Side = asrBottom
+    EditLabel.Left = 276
+    EditLabel.Height = 15
+    EditLabel.Top = 212
+    EditLabel.Width = 36
+    EditLabel.Caption = 'Epoch:'
+    EditLabel.ParentColor = False
+    LabelPosition = lpLeft
     TabOrder = 8
+    Text = 's'
+    OnExit = LabeledEdit_Exit
+  end
+  object Button3: TButton
+    Left = 8
+    Height = 25
+    Top = 423
+    Width = 34
+    Anchors = [akLeft, akBottom]
+    Caption = '+'
+    Font.Pitch = fpFixed
+    Font.Style = [fsBold]
+    OnClick = Button3Click
+    ParentFont = False
+    TabOrder = 9
+  end
+  object Button4: TButton
+    Left = 48
+    Height = 25
+    Top = 423
+    Width = 34
+    Anchors = [akLeft, akBottom]
+    Caption = '-'
+    Font.Pitch = fpFixed
+    Font.Style = [fsBold]
+    OnClick = Button4Click
+    OnMouseEnter = Button4MouseEnter
+    OnMouseLeave = Button4MouseLeave
+    ParentFont = False
+    TabOrder = 10
+  end
+  object ListView1: TListView
+    Left = 8
+    Height = 351
+    Top = 64
+    Width = 250
+    Anchors = [akTop, akLeft, akBottom]
+    AutoWidthLastColumn = True
+    Columns = <    
+      item
+        Caption = 'Data Sources'
+        Width = 246
+      end>
+    Font.Height = -16
+    HideSelection = False
+    ParentFont = False
+    RowSelect = True
+    SortColumn = 0
+    SortType = stText
+    TabOrder = 11
+    ViewStyle = vsReport
+    OnEdited = ListView1Edited
+    OnEditing = ListView1Editing
+    OnExit = ListView1Exit
+    OnSelectItem = ListView1SelectItem
   end
 end

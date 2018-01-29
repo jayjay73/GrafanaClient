@@ -9,4 +9,4 @@
 *.trc
 /backup
 /lib
-
+gcConfig.txt
