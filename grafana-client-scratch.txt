@@ -200,3 +200,4 @@ LabeledEdit4.Enabled:= true;
 LabeledEdit5.Enabled:= true;
 LabeledEdit3.Enabled:= true;
 LabeledEdit6.Enabled:= true;
+

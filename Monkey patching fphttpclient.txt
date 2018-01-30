@@ -1,0 +1,29 @@
+====================================================
+
+Monkey-patching TFPHTTPClient:
+
+If you get an error message about HTTP chunk size, you have to patch fphttpclient.pp:
+
+
+Check out HEAD from fpc-source via SVN (or download by other means...) https://svn.freepascal.org/svn/fpc/trunk.
+
+Copy the file packages\fcl-web\src\base\fphttpclient.pp to your Lazarus installation (i.e. \lazarus\) into the directory fpc\3.0.4\source\packages\fcl-web\src\base.
+
+Compile the file by opening it in Lazarus and selecting Run->Build file.
+
+Copy the compiled objects:
+
+fpc\3.0.4\source\packages\fcl-web\src\base\httpdefs.ppu
+fpc\3.0.4\source\packages\fcl-web\src\base\httpdefs.rsj
+fpc\3.0.4\source\packages\fcl-web\src\base\httpprotocol.o
+fpc\3.0.4\source\packages\fcl-web\src\base\httpprotocol.ppu
+fpc\3.0.4\source\packages\fcl-web\src\base\fphttpclient.o
+fpc\3.0.4\source\packages\fcl-web\src\base\fphttpclient.ppu
+fpc\3.0.4\source\packages\fcl-web\src\base\fphttpclient.rsj
+fpc\3.0.4\source\packages\fcl-web\src\base\httpdefs.o
+
+to fpc\3.0.4\units\x86_64-win64\fcl-web and replace the old files with them.
+
+Rebuild your project.
+
+====================================================
