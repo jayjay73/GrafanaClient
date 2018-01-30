@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 0
+  Left = -1078
   Height = 453
-  Top = 0
+  Top = 632
   Width = 808
   ActiveControl = Button1
   Caption = 'Settings'
@@ -10,10 +10,10 @@ object Form2: TForm2
   Color = clGrayText
   Constraints.MinHeight = 438
   Constraints.MinWidth = 652
+  DesignTimePPI = 106
   OnCreate = FormCreate
   Position = poMainFormCenter
   LCLVersion = '1.8.0.6'
-  Visible = False
   object Label5: TLabel
     Left = 8
     Height = 37
@@ -62,7 +62,7 @@ object Form2: TForm2
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 315
-    Height = 23
+    Height = 25
     Top = 64
     Width = 490
     Anchors = [akTop, akLeft, akRight]
@@ -72,10 +72,10 @@ object Form2: TForm2
     EditLabel.AnchorSideRight.Control = LabeledEdit1
     EditLabel.AnchorSideBottom.Control = LabeledEdit1
     EditLabel.AnchorSideBottom.Side = asrBottom
-    EditLabel.Left = 288
-    EditLabel.Height = 15
+    EditLabel.Left = 286
+    EditLabel.Height = 17
     EditLabel.Top = 68
-    EditLabel.Width = 24
+    EditLabel.Width = 26
     EditLabel.Caption = 'URL:'
     EditLabel.ParentColor = False
     LabelPosition = lpLeft
@@ -84,7 +84,7 @@ object Form2: TForm2
   end
   object LabeledEdit2: TLabeledEdit
     Left = 315
-    Height = 23
+    Height = 25
     Top = 96
     Width = 79
     EditLabel.AnchorSideTop.Control = LabeledEdit2
@@ -92,10 +92,10 @@ object Form2: TForm2
     EditLabel.AnchorSideRight.Control = LabeledEdit2
     EditLabel.AnchorSideBottom.Control = LabeledEdit2
     EditLabel.AnchorSideBottom.Side = asrBottom
-    EditLabel.Left = 286
-    EditLabel.Height = 15
+    EditLabel.Left = 282
+    EditLabel.Height = 17
     EditLabel.Top = 100
-    EditLabel.Width = 26
+    EditLabel.Width = 30
     EditLabel.Caption = 'User:'
     EditLabel.ParentColor = False
     LabelPosition = lpLeft
@@ -106,7 +106,7 @@ object Form2: TForm2
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 315
-    Height = 23
+    Height = 25
     Top = 176
     Width = 490
     Anchors = [akTop, akLeft, akRight]
@@ -116,10 +116,10 @@ object Form2: TForm2
     EditLabel.AnchorSideRight.Control = LabeledEdit3
     EditLabel.AnchorSideBottom.Control = LabeledEdit3
     EditLabel.AnchorSideBottom.Side = asrBottom
-    EditLabel.Left = 277
-    EditLabel.Height = 15
+    EditLabel.Left = 274
+    EditLabel.Height = 17
     EditLabel.Top = 180
-    EditLabel.Width = 35
+    EditLabel.Width = 38
     EditLabel.Caption = 'Query:'
     EditLabel.ParentColor = False
     LabelPosition = lpLeft
@@ -128,7 +128,7 @@ object Form2: TForm2
   end
   object LabeledEdit4: TLabeledEdit
     Left = 473
-    Height = 23
+    Height = 25
     Top = 96
     Width = 79
     EchoMode = emPassword
@@ -137,10 +137,10 @@ object Form2: TForm2
     EditLabel.AnchorSideRight.Control = LabeledEdit4
     EditLabel.AnchorSideBottom.Control = LabeledEdit4
     EditLabel.AnchorSideBottom.Side = asrBottom
-    EditLabel.Left = 417
-    EditLabel.Height = 15
+    EditLabel.Left = 411
+    EditLabel.Height = 17
     EditLabel.Top = 100
-    EditLabel.Width = 53
+    EditLabel.Width = 59
     EditLabel.Caption = 'Password:'
     EditLabel.ParentColor = False
     LabelPosition = lpLeft
@@ -150,7 +150,7 @@ object Form2: TForm2
   end
   object LabeledEdit5: TLabeledEdit
     Left = 315
-    Height = 23
+    Height = 25
     Top = 128
     Width = 79
     EditLabel.AnchorSideTop.Control = LabeledEdit5
@@ -158,10 +158,10 @@ object Form2: TForm2
     EditLabel.AnchorSideRight.Control = LabeledEdit5
     EditLabel.AnchorSideBottom.Control = LabeledEdit5
     EditLabel.AnchorSideBottom.Side = asrBottom
-    EditLabel.Left = 294
-    EditLabel.Height = 15
+    EditLabel.Left = 293
+    EditLabel.Height = 17
     EditLabel.Top = 132
-    EditLabel.Width = 18
+    EditLabel.Width = 19
     EditLabel.Caption = 'DB:'
     EditLabel.ParentColor = False
     LabelPosition = lpLeft
@@ -170,7 +170,7 @@ object Form2: TForm2
   end
   object LabeledEdit6: TLabeledEdit
     Left = 315
-    Height = 23
+    Height = 25
     Top = 208
     Width = 79
     EditLabel.AnchorSideTop.Control = LabeledEdit6
@@ -178,10 +178,10 @@ object Form2: TForm2
     EditLabel.AnchorSideRight.Control = LabeledEdit6
     EditLabel.AnchorSideBottom.Control = LabeledEdit6
     EditLabel.AnchorSideBottom.Side = asrBottom
-    EditLabel.Left = 276
-    EditLabel.Height = 15
+    EditLabel.Left = 273
+    EditLabel.Height = 17
     EditLabel.Top = 212
-    EditLabel.Width = 36
+    EditLabel.Width = 39
     EditLabel.Caption = 'Epoch:'
     EditLabel.ParentColor = False
     LabelPosition = lpLeft

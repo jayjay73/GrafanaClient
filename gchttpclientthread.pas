@@ -9,7 +9,7 @@ uses
 
 type
     TSyncRequestParamsEvent = procedure(var request: string; var refresh: integer; var user, pass: string) of object;
-    TSyncResponseDataEvent = procedure(response: string) of object;
+    TSyncResponseDataEvent = procedure(response: string; cookies: TStrings) of object;
 
     TWebGetThread = class(TThread)
     private
@@ -17,6 +17,7 @@ type
         fRefresh: integer;
         fAnswer: string;
         fUser, fPass: string;
+        fCookieJar: TStrings;
         getNewRequest: boolean;
         HTTPClient: TFPHttpClient;
         FSynchRequestParams: TSyncRequestParamsEvent;
@@ -31,6 +32,7 @@ type
         constructor Create(CreateSuspended: boolean);
         class procedure CreateOrRecycle(var instanceVar: TWebGetThread);
         property Refresh: integer read fRefresh write fRefresh;
+        property CookieJar: TStrings read fCookieJar write fCookieJar;
         property OnSyncRequestParams: TSyncRequestParamsEvent read FSynchRequestParams write FSynchRequestParams;
         property OnSynchResponseData: TSyncResponseDataEvent read FSynchResponseData write FSynchResponseData;
     end;
@@ -70,7 +72,7 @@ end;
 procedure TWebGetThread.DoSyncResponseData;
 begin
     if Assigned(FSynchResponseData) then
-        FSynchResponseData(fAnswer);
+        FSynchResponseData(fAnswer, fCookieJar);
 end;
 
 procedure TWebGetThread.Execute;
@@ -92,6 +94,8 @@ begin
             HttpClient.AddHeader('Content-Type', 'application/json');
             HttpClient.AddHeader('Accept', 'application/json');
             fAnswer := HttpClient.Get(fRequest);
+            fCookieJar:= TStringList.Create;
+            fCookieJar.Text:= HttpClient.Cookies.Text;
 
         finally
             HttpClient.Free;

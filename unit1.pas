@@ -55,10 +55,11 @@ type
         Memo1: TMemo;
         OKButton: TButton;
         CancelButton: TButton;
+        fCookies: TstringList;
         procedure CheckBox1Change(Sender: TObject);
         procedure ComboBox1Change(Sender: TObject);
         procedure CopyRequest(var request: string; var autorefresh: integer; var user, pass: string);
-        procedure CopyResponse(response: string);
+        procedure CopyResponse(response: string; cookies: TStrings);
         procedure Edit5Exit(Sender: TObject);
         procedure FormCreate(Sender: TObject);
         procedure MenuItem2Click(Sender: TObject);
@@ -218,7 +219,7 @@ begin
 
 end;
 
-procedure TForm1.CopyResponse(response: string);
+procedure TForm1.CopyResponse(response: string; cookies: TStrings);
 var
     iRes, iSer, iPoint, numResults, numSeries, numPoints: integer;
     eJson: TJSONEnum;
@@ -230,6 +231,8 @@ begin
     // pass data to main thread
     Memo1.Lines.Add(DateTimeToStr(Now));
 
+    //cookies.Delimiter:='|';
+    memo1.Lines.Add(cookies.CommaText);
     jData := GetJSON(response);
     Memo1.Lines.Add(jData.AsJSON);
 

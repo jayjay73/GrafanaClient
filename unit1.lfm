@@ -1,14 +1,15 @@
 object Form1: TForm1
-  Left = 705
+  Left = -1178
   Height = 659
-  Top = 347
+  Top = -134
   Width = 920
   Caption = 'GrafanaClient'
-  ClientHeight = 659
+  ClientHeight = 637
   ClientWidth = 920
   Color = clGrayText
   Constraints.MinHeight = 300
   Constraints.MinWidth = 814
+  DesignTimePPI = 106
   Menu = MainMenu1
   OnCreate = FormCreate
   LCLVersion = '1.8.0.6'
@@ -19,7 +20,7 @@ object Form1: TForm1
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Splitter1
     Left = 0
-    Height = 512
+    Height = 490
     Top = 24
     Width = 920
     AntialiasingMode = amOn
@@ -85,7 +86,7 @@ object Form1: TForm1
   end
   object Edit5: TEdit
     Left = 450
-    Height = 23
+    Height = 25
     Top = 10
     Width = 57
     Anchors = [akTop, akRight]
@@ -103,7 +104,7 @@ object Form1: TForm1
     Cursor = crVSplit
     Left = 0
     Height = 6
-    Top = 536
+    Top = 514
     Width = 920
     Align = alNone
     Anchors = [akLeft, akRight, akBottom]
@@ -119,8 +120,8 @@ object Form1: TForm1
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 0
-    Height = 23
-    Top = 616
+    Height = 25
+    Top = 612
     Width = 920
     Panels = <>
     ParentFont = False
@@ -136,7 +137,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 805
     Height = 22
-    Top = 617
+    Top = 613
     Width = 75
     Anchors = [akTop, akRight]
     BorderSpacing.Top = 1
@@ -153,8 +154,8 @@ object Form1: TForm1
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = StatusBar1
     Left = 1
-    Height = 74
-    Top = 542
+    Height = 92
+    Top = 520
     Width = 919
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 1
@@ -171,10 +172,10 @@ object Form1: TForm1
     TabOrder = 2
   end
   object CheckBox1: TCheckBox
-    Left = 298
-    Height = 19
+    Left = 284
+    Height = 21
     Top = 14
-    Width = 142
+    Width = 156
     Anchors = [akTop, akRight]
     Caption = 'Auto Refresh(seconds):'
     OnChange = CheckBox1Change
@@ -191,7 +192,7 @@ object Form1: TForm1
   end
   object Edit1: TEdit
     Left = 578
-    Height = 23
+    Height = 25
     Top = 10
     Width = 144
     Anchors = [akTop, akRight]
@@ -200,11 +201,11 @@ object Form1: TForm1
   end
   object ComboBox1: TComboBox
     Left = 122
-    Height = 23
+    Height = 25
     Top = 10
     Width = 152
     Anchors = [akTop, akRight]
-    ItemHeight = 15
+    ItemHeight = 17
     OnChange = ComboBox1Change
     Sorted = True
     Style = csDropDownList
